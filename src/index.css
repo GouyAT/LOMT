@@ -1,0 +1,375 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============ 诡秘剧场 · 设计系统 ============ */
+
+:root {
+  --abyss: #0a0a0f;
+  --gold: #d4af37;
+  --gold-deep: #8a6d1f;
+  --gold-bright: #f0d98c;
+  --blood: #8b0000;
+  --parchment: #e6d9b8;
+  --ink: #e8e2d0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--abyss);
+  color: var(--ink);
+  font-family: 'EB Garamond', 'Noto Serif SC', 'Songti SC', serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+::selection {
+  background: rgba(212, 175, 55, 0.32);
+  color: #f7ecd0;
+}
+
+/* ---------- 滚动条 ---------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 175, 55, 0.28) transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(212, 175, 55, 0.4), rgba(138, 109, 31, 0.4));
+  border-radius: 3px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- 材质：羊皮纸 ---------- */
+.parchment {
+  background:
+    radial-gradient(ellipse at 18% 8%, rgba(120, 96, 40, 0.16), transparent 55%),
+    radial-gradient(ellipse at 85% 90%, rgba(96, 70, 24, 0.18), transparent 50%),
+    linear-gradient(160deg, #e9dcc0 0%, #e2d2ae 34%, #d9c7a0 66%, #d3bf94 100%);
+  color: #3a3322;
+  box-shadow:
+    inset 0 0 60px rgba(90, 70, 30, 0.28),
+    inset 0 0 6px rgba(90, 70, 30, 0.2),
+    0 6px 24px rgba(0, 0, 0, 0.45);
+}
+.parchment::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E");
+}
+.parchment-dark {
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(212, 175, 55, 0.05), transparent 55%),
+    radial-gradient(ellipse at 82% 92%, rgba(139, 0, 0, 0.08), transparent 52%),
+    linear-gradient(165deg, #13131d 0%, #0f0f18 45%, #0c0c13 100%);
+  box-shadow: inset 0 0 70px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(240, 217, 140, 0.05);
+}
+.parchment-dark::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n2)' opacity='0.1'/%3E%3C/svg%3E");
+}
+
+/* ---------- 材质：天鹅绒帷幕 ---------- */
+.curtain {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.34) 0px,
+      rgba(0, 0, 0, 0) 7px,
+      rgba(255, 160, 120, 0.05) 14px,
+      rgba(0, 0, 0, 0.28) 22px,
+      rgba(0, 0, 0, 0) 30px,
+      rgba(120, 20, 20, 0.1) 40px
+    ),
+    linear-gradient(180deg, #6e1818 0%, #4d0f0f 42%, #380a0a 78%, #2a0707 100%);
+  box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------- 材质：金箔 ---------- */
+.goldfoil {
+  background: linear-gradient(135deg, #8a6d1f 0%, #d4af37 22%, #f7ecd0 42%, #d4af37 62%, #9a7b26 82%, #6b5418 100%);
+  background-size: 200% 200%;
+}
+
+/* ---------- 材质：火漆印章 ---------- */
+.seal {
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 200, 190, 0.5), transparent 34%),
+    radial-gradient(circle at 50% 50%, #a01a1a 0%, #7c0e0e 55%, #520606 85%, #3a0404 100%);
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.55),
+    inset 0 2px 5px rgba(255, 160, 140, 0.3),
+    inset 0 -3px 7px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- 装饰：四角金饰 ---------- */
+.corner-frame::before,
+.corner-frame::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+.corner-frame::before {
+  top: 6px;
+  left: 6px;
+  border-top: 1px solid rgba(212, 175, 55, 0.55);
+  border-left: 1px solid rgba(212, 175, 55, 0.55);
+}
+.corner-frame::after {
+  bottom: 6px;
+  right: 6px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.55);
+  border-right: 1px solid rgba(212, 175, 55, 0.55);
+}
+
+/* ---------- 装饰：分隔纹章 ---------- */
+.filigree-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(212, 175, 55, 0.6);
+}
+.filigree-divider::before,
+.filigree-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.45), transparent);
+}
+
+/* ---------- 玻璃面板 ---------- */
+.glass-panel {
+  background: linear-gradient(165deg, rgba(20, 20, 32, 0.82), rgba(10, 10, 16, 0.9));
+  border: 1px solid rgba(212, 175, 55, 0.14);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(240, 217, 140, 0.05);
+  backdrop-filter: blur(14px);
+}
+
+/* ---------- 按钮：火漆主按钮 ---------- */
+.btn-seal {
+  position: relative;
+  overflow: hidden;
+  font-family: 'Cinzel', 'Noto Serif SC', serif;
+  letter-spacing: 0.14em;
+  color: #241a05;
+  background: linear-gradient(160deg, #e8c96a 0%, #d4af37 45%, #a8861f 80%, #8a6d1f 100%);
+  border: 1px solid rgba(247, 236, 208, 0.5);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 24px rgba(212, 175, 55, 0.22);
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, filter 0.25s ease;
+}
+.btn-seal:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.07);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 0 34px rgba(212, 175, 55, 0.34);
+}
+.btn-seal:active {
+  transform: translateY(0) scale(0.97);
+}
+.btn-seal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), rgba(255, 255, 255, 0.55), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.btn-seal:active::after {
+  opacity: 1;
+  transition: opacity 0s;
+}
+
+/* ---------- 按钮：幽灵次按钮 ---------- */
+.btn-ghost {
+  font-family: 'Cinzel', 'Noto Serif SC', serif;
+  letter-spacing: 0.12em;
+  color: #e8e2d0;
+  background: rgba(212, 175, 55, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  transition: all 0.25s ease;
+}
+.btn-ghost:hover {
+  background: rgba(212, 175, 55, 0.12);
+  border-color: rgba(212, 175, 55, 0.55);
+  color: #f0d98c;
+  box-shadow: 0 0 18px rgba(212, 175, 55, 0.15);
+  transform: translateY(-1px);
+}
+.btn-ghost:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ---------- 墨水涟漪 ---------- */
+.ink-ripple {
+  position: relative;
+  overflow: hidden;
+}
+.ink-ripple .ripple-ink {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.5), rgba(212, 175, 55, 0.12) 55%, transparent 72%);
+  transform: scale(0);
+  animation: ripple-burst 0.7s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes ripple-burst {
+  to {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+/* ---------- 金线发光文字 ---------- */
+.gold-glow-text {
+  background: linear-gradient(180deg, #f7ecd0 0%, #e6c768 38%, #d4af37 62%, #8a6d1f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 32px rgba(212, 175, 55, 0.25);
+}
+
+/* ---------- 打字机光标 ---------- */
+.type-caret::after {
+  content: '▌';
+  margin-left: 2px;
+  color: rgba(212, 175, 55, 0.9);
+  animation: pulse-soft 0.9s ease-in-out infinite;
+}
+
+/* ---------- 六维属性条 ---------- */
+.stat-track {
+  position: relative;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(232, 226, 208, 0.1);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+.stat-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  transform-origin: left;
+  background: linear-gradient(90deg, #6b5418, #d4af37 60%, #f0d98c);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.45);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.stat-fill.danger {
+  background: linear-gradient(90deg, #4a0808, #8b0000 55%, #c0392b);
+  box-shadow: 0 0 10px rgba(139, 0, 0, 0.6);
+  animation: flicker 2.2s ease-in-out infinite;
+}
+
+/* ---------- 塔罗卡牌 ---------- */
+.tarot-card {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.34, 1.2, 0.64, 1);
+  cursor: pointer;
+}
+.tarot-card.flipped {
+  transform: rotateY(180deg);
+}
+.tarot-card .card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 10px;
+}
+.tarot-card .card-back {
+  background:
+    radial-gradient(circle at 50% 46%, rgba(212, 175, 55, 0.16), transparent 46%),
+    repeating-linear-gradient(45deg, rgba(212, 175, 55, 0.05) 0 2px, transparent 2px 8px),
+    linear-gradient(165deg, #17172a 0%, #0e0e1c 60%, #0a0a14 100%);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55), inset 0 0 26px rgba(212, 175, 55, 0.1);
+}
+.tarot-card .card-front {
+  transform: rotateY(180deg);
+  background: linear-gradient(165deg, #e9dcc0, #d9c7a0);
+  border: 1px solid rgba(138, 109, 31, 0.6);
+  color: #3a3322;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- 聚光灯 ---------- */
+.spotlight {
+  position: absolute;
+  top: 0;
+  width: 46%;
+  height: 62%;
+  background: linear-gradient(180deg, rgba(247, 236, 208, 0.14), rgba(247, 236, 208, 0.03) 72%, transparent);
+  clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
+  filter: blur(2px);
+  pointer-events: none;
+  animation: flicker 7s ease-in-out infinite;
+}
+
+/* ---------- 剧院招牌灯 ---------- */
+.marquee-light {
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  box-shadow:
+    0 0 12px rgba(212, 175, 55, 0.35),
+    0 0 30px rgba(212, 175, 55, 0.16),
+    inset 0 0 20px rgba(212, 175, 55, 0.14);
+  animation: flicker 6.5s ease-in-out infinite;
+}
+
+/* ---------- 木纹地面 ---------- */
+.stage-floor {
+  background:
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.28) 0 2px, transparent 2px 90px),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.12) 0 1px, transparent 1px 6px),
+    linear-gradient(180deg, #2a1c10 0%, #1d130a 60%, #140d07 100%);
+}
+
+/* ---------- 通用 ---------- */
+.panel-title {
+  font-family: 'Cinzel', 'Noto Serif SC', serif;
+  letter-spacing: 0.16em;
+  color: #f0d98c;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.diegetic-caption {
+  font-family: 'Noto Serif SC', serif;
+  color: rgba(232, 226, 208, 0.55);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.hover-glow {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+.hover-glow:hover {
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 0 22px rgba(212, 175, 55, 0.16);
+  transform: translateY(-2px);
+}
+
+.reduce-motion * {
+  animation-duration: 0.001s !important;
+  transition-duration: 0.001s !important;
+}
