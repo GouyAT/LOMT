@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-skin="" data-motion="" data-fx="on">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="诡秘剧场 · 前端原型5「暗房样张」——P3 暗房视觉 + P4 信息架构 + P1 控件克制度的合成体，零构建零依赖静态页。">
+<title>诡秘剧场 · 暗房样张 · 前端原型5</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Noto+Serif+SC:wght@400;500;700;900&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap">
+
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/darkroom.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/panels.css">
+<link rel="stylesheet" href="styles/enlarger.css">
+<link rel="stylesheet" href="styles/motion.css">
+</head>
+
+<body data-device="pc">
+
+<!-- ============ 暗室底 + 银盐颗粒 + 浮尘 ============ -->
+<div id="p5-room" aria-hidden="true"></div>
+<canvas id="p5-dust" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ============ 主界面 ============ -->
+<div id="p5-app" aria-hidden="true">
+
+  <!-- 暗房横梁：控件 4 个（样张 / 端切换×2 / 皮肤） -->
+  <header id="p5-beam" aria-label="暗房横梁：安全灯、世界时钟、管线状态与样张入口"></header>
+
+  <!-- 显影槽（左）：只读内容；唯一控件是脊标 -->
+  <nav id="p5-trough" data-collapsed="0" aria-label="显影槽：角色读数（只读）">
+    <div class="trough__inner">
+      <button id="p5-trough-spine" class="spine" type="button" aria-label="收起或展开显影槽">
+        <span class="chev">▸</span>
+        <span class="zh">卷宗</span>
+        <span class="en">developing trough</span>
+      </button>
+      <div id="p5-trough-body" class="trough__body"></div>
+    </div>
+  </nav>
+
+  <!-- 显影台（中） -->
+  <main id="p5-stage" data-mode="strip" aria-label="显影台：场景底片与相纸正文">
+    <section id="p5-stage-view" class="stage__view" aria-label="场景与正文"></section>
+    <section id="p5-composer" aria-label="行动输入区"></section>
+  </main>
+
+  <!-- 相片墙（右）：只读内容 + 读心入口 -->
+  <aside id="p5-wall" data-collapsed="0" aria-label="相片墙：世界动态、在场人物与活跃伏笔">
+    <div class="wall__inner">
+      <button id="p5-wall-spine" class="spine" type="button" aria-label="收起或展开相片墙">
+        <span class="zh">相片墙</span>
+        <span class="en">print wall</span>
+      </button>
+      <div id="p5-wall-body" class="wall__body"></div>
+    </div>
+  </aside>
+
+  <!-- 工作台（底）：0 常驻控件，只放已收回的底片夹与只读读数 -->
+  <footer id="p5-bench" aria-label="工作台：底片夹停靠与只读读数">
+    <div id="p5-bench-left" class="row"></div>
+    <div id="p5-dock" role="toolbar" aria-label="已收回的放大机底片夹"></div>
+    <div id="p5-bench-right" class="row"></div>
+  </footer>
+
+  <!-- 移动端底部三标签：剧场 / 卷宗 / 样张 -->
+  <nav id="p5-tabbar" aria-label="移动端主导航"></nav>
+</div>
+
+<!-- ============ 放大机投影层（多窗口） ============ -->
+<div id="p5-enlarger" aria-label="放大机投影层"></div>
+
+<!-- ============ 接触印相样张（24 格面板唯一入口） ============ -->
+<div id="p5-contact" data-open="0" role="dialog" aria-modal="true" aria-labelledby="p5-contact-title">
+  <div class="contact__head">
+    <div id="p5-contact-title" class="zh">接触印相样张</div>
+    <div class="en">the contact sheet</div>
+    <div class="hint">整卷底片印在一张纸上 · 方向键游走 · Enter 架进放大机 · Esc 收起</div>
+  </div>
+  <div id="p5-sheet-paper" aria-label="二十四格底片"></div>
+  <div class="contact__foot">
+    <p id="p5-sheet-desc">把光标移到一格上，看看那一格是什么。</p>
+    <div class="contact__legend">
+      <span style="color:var(--safelight-2)"><i></i>叙事段 N°01—06</span>
+      <span style="color:var(--cyan-2)"><i></i>玩法段 N°07—15</span>
+      <span style="color:var(--silver-2)"><i></i>系统段 N°16—24</span>
+      <span style="color:var(--fixer-2)"><i></i>已在放大机上</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 移动端抽屉（相纸袋） ============ -->
+<div id="p5-drawer-scrim" data-open="0" aria-hidden="true"></div>
+<section id="p5-drawer" data-open="0" role="dialog" aria-modal="false" aria-labelledby="p5-drawer-title">
+  <div id="p5-drawer-grip" class="drawer__grip" role="button" tabindex="0" aria-label="收起抽屉"></div>
+  <header class="drawer__head"><h2 id="p5-drawer-title" class="drawer__title">抽屉</h2></header>
+  <div id="p5-drawer-body" class="drawer__body"></div>
+</section>
+
+<!-- ============ 内部通知（零浏览器原生弹窗） ============ -->
+<div id="p5-toasts" aria-live="polite" aria-label="显影小样通知"></div>
+<div id="p5-timer-scrim" data-open="0"></div>
+<div id="p5-leak" data-open="0" aria-hidden="true"></div>
+<div id="p5-leak-note" data-open="0" aria-live="assertive"></div>
+
+<!-- ============ 登录页 ============ -->
+<div id="p5-gate" hidden aria-label="入场：诡秘剧场">
+  <section id="p5-gate-scene" class="gate__scene" aria-hidden="true"></section>
+  <section id="p5-gate-panel" class="gate__panel" aria-label="入场选项"></section>
+</div>
+
+<!-- ============ 开场（显影盘） ============ -->
+<div id="p5-open" data-phase="title"></div>
+
+<!-- 快门过场（独立于开场层，因此能覆盖登录页） -->
+<div id="p5-shutter" data-phase="idle" aria-hidden="true">
+  <i class="blade"></i><i class="blade"></i><i class="blade"></i><i class="blade"></i><i class="blade"></i>
+</div>
+
+<script src="scripts/icons.js"></script>
+<script src="scripts/core.js"></script>
+<script src="scripts/data.js"></script>
+<script src="scripts/fx.js"></script>
+<script src="scripts/notify.js"></script>
+<script src="scripts/sheet.js"></script>
+<script src="scripts/stage.js"></script>
+<script src="scripts/panels-a.js"></script>
+<script src="scripts/panels-b.js"></script>
+<script src="scripts/panels-c.js"></script>
+<script src="scripts/panels-d.js"></script>
+<script src="scripts/app.js"></script>
+</body>
+</html>

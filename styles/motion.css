@@ -1,0 +1,143 @@
+/* ============================================================
+   motion.css —— 进入编排 / 微交互 / 动效降级
+   ============================================================ */
+
+/* 主界面进入编排：安全灯亮 → 横梁落 → 两侧滑入 → 相纸显影 */
+#p5-app.is-live #p5-beam { animation: in-beam 620ms var(--ease-develop) both; }
+#p5-app.is-live #p5-trough { animation: in-left 700ms 90ms var(--ease-develop) both; }
+#p5-app.is-live #p5-wall { animation: in-right 700ms 150ms var(--ease-develop) both; }
+#p5-app.is-live #p5-bench { animation: in-bench 620ms 220ms var(--ease-develop) both; }
+#p5-app.is-live #p5-print { animation: in-print 900ms 280ms var(--ease-develop) both; }
+
+@keyframes in-beam { from { opacity: 0; transform: translateY(-100%); } to { opacity: 1; transform: none; } }
+@keyframes in-left { from { opacity: 0; transform: translateX(-22px); } to { opacity: 1; transform: none; } }
+@keyframes in-right { from { opacity: 0; transform: translateX(22px); } to { opacity: 1; transform: none; } }
+@keyframes in-bench { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: none; } }
+@keyframes in-print {
+  from { opacity: 0; transform: translateY(22px) scale(.986); filter: blur(7px) brightness(1.8); }
+  62% { filter: blur(1px) brightness(1.2); }
+  to { opacity: 1; transform: none; filter: blur(0) brightness(1); }
+}
+
+/* 侧栏内元素逐条落位 */
+#p5-app.is-live .trough__body > *,
+#p5-app.is-live .wall__body > * { animation: stack-in 520ms var(--ease-develop) both; }
+#p5-app.is-live .trough__body > *:nth-child(1), #p5-app.is-live .wall__body > *:nth-child(1) { animation-delay: 240ms; }
+#p5-app.is-live .trough__body > *:nth-child(2), #p5-app.is-live .wall__body > *:nth-child(2) { animation-delay: 300ms; }
+#p5-app.is-live .trough__body > *:nth-child(3), #p5-app.is-live .wall__body > *:nth-child(3) { animation-delay: 360ms; }
+#p5-app.is-live .trough__body > *:nth-child(4), #p5-app.is-live .wall__body > *:nth-child(4) { animation-delay: 420ms; }
+#p5-app.is-live .trough__body > *:nth-child(5), #p5-app.is-live .wall__body > *:nth-child(5) { animation-delay: 480ms; }
+@keyframes stack-in { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
+
+/* 晒片绳上的相片逐张挂上 */
+.pins > .pin-photo { animation: pin-hang 520ms var(--ease-sway) both; }
+.pins > .pin-photo:nth-child(1) { animation-delay: 40ms; }
+.pins > .pin-photo:nth-child(2) { animation-delay: 110ms; }
+.pins > .pin-photo:nth-child(3) { animation-delay: 180ms; }
+.pins > .pin-photo:nth-child(4) { animation-delay: 250ms; }
+.pins > .pin-photo:nth-child(5) { animation-delay: 320ms; }
+@keyframes pin-hang {
+  from { opacity: 0; transform: translateY(-14px) rotate(-4deg); }
+  70% { transform: translateY(2px) rotate(1.2deg); }
+  to { opacity: 1; transform: none; }
+}
+
+/* 面板内区块入场 */
+.proj__body > section,
+.proj__body > .block { animation: block-in 380ms var(--ease-develop) both; }
+.proj__body > *:nth-child(2) { animation-delay: 40ms; }
+.proj__body > *:nth-child(3) { animation-delay: 80ms; }
+.proj__body > *:nth-child(4) { animation-delay: 120ms; }
+.proj__body > *:nth-child(5) { animation-delay: 160ms; }
+@keyframes block-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* 标签页切换 */
+.tabpanel { animation: tab-in var(--t-mid) var(--ease-develop); }
+@keyframes tab-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+/* 样张里的格子逐格印出（接触印相的过程） */
+#p5-contact[data-open='1'] .sheet-frame { animation: frame-print 420ms var(--ease-develop) both; }
+@keyframes frame-print {
+  from { opacity: 0; filter: brightness(2.4) blur(3px); }
+  to { opacity: 1; filter: none; }
+}
+
+/* 数值跳动 */
+.is-tick { animation: num-tick 460ms var(--ease-out); }
+@keyframes num-tick {
+  0% { transform: scale(1); }
+  38% { transform: scale(1.2); color: var(--paper); }
+  100% { transform: scale(1); }
+}
+
+/* 新回合：相纸边缘一圈过曝 */
+.round-flash { animation: round-flash 900ms var(--ease-develop); }
+@keyframes round-flash {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--safelight) 58%, transparent), 0 22px 54px -26px rgba(0,0,0,.95); }
+  100% { box-shadow: 0 0 0 20px transparent, 0 22px 54px -26px rgba(0,0,0,.95); }
+}
+
+/* 显影中转盘 */
+.developing { position: relative; display: inline-grid; place-items: center; width: 18px; height: 18px; }
+.developing::before, .developing::after { content: ''; position: absolute; border-radius: 50%; border: 1px solid transparent; }
+.developing::before { inset: 0; border-top-color: var(--safelight-2); border-right-color: color-mix(in srgb, var(--safelight) 44%, transparent); animation: spin 900ms linear infinite; }
+.developing::after { inset: 4px; border-bottom-color: var(--cyan-2); animation: spin 1400ms linear infinite reverse; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 骨架显影 */
+.dev-skeleton {
+  background: linear-gradient(100deg,
+      color-mix(in srgb, var(--room-3) 72%, transparent) 0%,
+      color-mix(in srgb, var(--room-4) 88%, transparent) 42%,
+      color-mix(in srgb, var(--room-3) 72%, transparent) 84%);
+  background-size: 260% 100%;
+  border-radius: var(--r-1);
+  animation: skel-sweep 1500ms var(--ease-sway) infinite;
+}
+@keyframes skel-sweep { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+
+.lift { transition: transform var(--t-mid) var(--ease-develop), box-shadow var(--t-mid) linear; }
+.lift:hover { transform: translateY(-2px); box-shadow: var(--sh-lift); }
+
+.flash-target { animation: flash-target 1200ms var(--ease-develop); }
+@keyframes flash-target {
+  0% { background-color: color-mix(in srgb, var(--fixer) 28%, transparent); }
+  100% { background-color: transparent; }
+}
+
+/* ============================================================
+   动效降级
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+  .scene-layer__img { animation: none !important; transform: none !important; }
+  #p5-dust, .grain, .scene-layer__fog, .scene-layer__lamp, #p5-room::after { display: none !important; }
+  .safelamp, .tray::before, .plate-portrait::after { animation: none !important; }
+}
+
+:root[data-motion='off'] *,
+:root[data-motion='off'] *::before,
+:root[data-motion='off'] *::after {
+  animation-duration: 1ms !important;
+  animation-iteration-count: 1 !important;
+  animation-delay: 0ms !important;
+  transition-duration: 1ms !important;
+}
+:root[data-motion='off'] #p5-dust,
+:root[data-motion='off'] .grain,
+:root[data-motion='off'] .scene-layer__fog,
+:root[data-motion='off'] .scene-layer__lamp,
+:root[data-motion='off'] #p5-room::after { display: none !important; }
+:root[data-motion='off'] .scene-layer__img { animation: none !important; }
+
+:root[data-fx='off'] #p5-dust,
+:root[data-fx='off'] .grain,
+:root[data-fx='off'] .scene-layer__fog,
+:root[data-fx='off'] .scene-layer__lamp { display: none !important; }
+:root[data-fx='off'] #p5-contact { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(12,9,10,.97); }

@@ -1,0 +1,215 @@
+/* ============================================================
+   诡秘剧场 · 原型5「暗房样张」— 设计令牌
+   视觉与配色继承 P3「灵异显影室」（令牌值原样承袭，保证同一血脉）
+   新增：接触印相样张 / 放大机投影 / 控件预算相关尺寸
+   纪律：红管氛围与危险 · 蓝管信息与结构 · 银管金属与分隔（永不混用）
+   ============================================================ */
+
+:root {
+  /* ---------- 暗室（60%） ---------- */
+  --void: #100c0d;
+  --room-1: #171113;
+  --room-2: #211719;
+  --room-3: #2c2022;
+  --room-4: #3a2b2d;
+
+  /* ---------- 相纸与银盐（30%） ---------- */
+  --paper: #f1eade;
+  --paper-2: #e0d6c4;
+  --paper-3: #c9bda8;
+  --ink: #23201c;
+  --ink-2: #514a41;
+  --ink-3: #7d7466;
+  --silver: #c4ccd1;
+  --silver-2: #8f989e;
+  --silver-3: #5d666b;
+  --silver-4: #3d4448;
+
+  /* ---------- 强调（10%） ---------- */
+  --safelight: #d2452e;
+  --safelight-2: #f2765a;
+  --safelight-3: #7d2318;
+  --cyan: #2a6d90;
+  --cyan-2: #5fabd0;
+  --cyan-3: #16394d;
+  --fixer: #c9913c;
+  --fixer-2: #e6b96a;
+  --warn: #a8291f;
+
+  /* ---------- 语义别名 ---------- */
+  --bg: var(--void);
+  --surface: var(--room-1);
+  --surface-2: var(--room-2);
+  --surface-3: var(--room-3);
+  --line: color-mix(in srgb, var(--silver-4) 62%, transparent);
+  --line-soft: color-mix(in srgb, var(--silver-4) 34%, transparent);
+  --line-strong: color-mix(in srgb, var(--silver-2) 46%, transparent);
+  --txt: color-mix(in srgb, var(--silver) 88%, var(--paper));
+  --txt-2: var(--silver-2);
+  /* 三级文字不用 --silver-3：小字号需满足 WCAG 4.5:1，故单独提亮 */
+  --txt-3: #7b858b;
+  --accent: var(--safelight);
+  --accent-2: var(--cyan);
+  --glow: color-mix(in srgb, var(--safelight) 40%, transparent);
+
+  /* ---------- 排版：四角色 ---------- */
+  --f-display: 'Bodoni Moda', 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', serif;
+  --f-serif: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'SimSun', serif;
+  --f-mono: 'Courier Prime', 'Cascadia Mono', 'DejaVu Sans Mono', Consolas, monospace;
+  --f-hand: 'LXGW WenKai', 'Kaiti SC', 'STKaiti', KaiTi, cursive;
+
+  --fs-3xs: 9.5px;
+  --fs-2xs: 10.5px;
+  --fs-xs: 11.5px;
+  --fs-sm: 12.5px;
+  --fs-md: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 19px;
+  --fs-2xl: 24px;
+  --fs-3xl: 32px;
+  --fs-4xl: 46px;
+  --fs-5xl: 68px;
+
+  --lh-tight: 1.22;
+  --lh-snug: 1.45;
+  --lh-body: 1.92;
+
+  /* ---------- 间距（4px 网格） ---------- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+
+  /* ---------- 形状 ---------- */
+  --r-1: 2px;
+  --r-2: 4px;
+  --r-3: 8px;
+  --r-4: 14px;
+  --r-pill: 999px;
+
+  /* ---------- 乳剂投影 ---------- */
+  --sh-near: 0 1px 2px rgba(0, 0, 0, .5), 0 0 0 1px color-mix(in srgb, var(--silver-4) 40%, transparent);
+  --sh-lift: 0 6px 18px -6px rgba(0, 0, 0, .72), 0 1px 0 color-mix(in srgb, var(--silver) 8%, transparent) inset;
+  --sh-screen: 0 34px 90px -28px rgba(0, 0, 0, .92), 0 0 0 1px color-mix(in srgb, var(--silver-2) 22%, transparent);
+  --sh-safelight: 0 0 26px -6px var(--glow);
+
+  /* ---------- 缓动 ---------- */
+  --ease-develop: cubic-bezier(.16, .84, .24, 1);
+  --ease-shutter: cubic-bezier(.36, 0, .66, -.4);
+  --ease-sway: cubic-bezier(.37, 0, .63, 1);
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+
+  --t-fast: 140ms;
+  --t-mid: 260ms;
+  --t-slow: 460ms;
+  --t-develop: 900ms;
+
+  /* ---------- 布局尺寸（P5：无侧栏图标轨道，故无 --rail-w） ---------- */
+  --beam-h: 52px;
+  --bench-h: 52px;      /* 底部工作台（仅放大机停靠位，无面板入口） */
+  --trough-w: 264px;    /* 显影槽（左，只读内容） */
+  --wall-w: 292px;      /* 相片墙（右，只读内容 + 读心入口） */
+  --tap-min: 44px;      /* 移动端最小触控目标：全局强制 */
+
+  /* ---------- 层级 ---------- */
+  --z-scene: 1;
+  --z-stage: 10;
+  --z-bench: 40;
+  --z-sheet: 70;        /* 移动端抽屉 */
+  --z-enlarger: 100;    /* 放大机投影窗口 */
+  --z-contact: 800;     /* 接触印相样张（唯一面板入口） */
+  --z-curtain: 1100;    /* 开场 */
+  --z-gate: 1120;       /* 登录 */
+  --z-dust: 1155;
+  --z-grain: 1160;
+  --z-shutter: 1180;    /* 快门过场 */
+  --z-toast: 1250;
+  --z-timer: 1300;      /* 显影计时器确认框 */
+  --z-leak: 1350;       /* 漏光警示 */
+
+  /* 场景底片虚化/压暗（设置面板可调） */
+  --scene-blur: 0px;
+  --scene-dim: .52;
+  --story-size: 15.5px;
+  --story-leading: 1.92;
+  --lamp-speed: 7s;
+}
+
+/* ============================================================
+   皮肤 2 · 蓝晒工房（承袭 P3）
+   ============================================================ */
+:root[data-skin='cyanotype'] {
+  --void: #0a1219;
+  --room-1: #0f1b24;
+  --room-2: #142430;
+  --room-3: #1b2f3d;
+  --room-4: #26414f;
+  --paper: #e8eef1;
+  --paper-2: #cfdce4;
+  --paper-3: #aec3d0;
+  --ink: #12222c;
+  --ink-2: #2f4f61;
+  --ink-3: #5b7b8c;
+  --silver: #d3e2ea;
+  --silver-2: #93aebd;
+  --silver-3: #5e7d8e;
+  --silver-4: #35525f;
+  --safelight: #4f93bd;
+  --safelight-2: #8fc9e6;
+  --safelight-3: #1d4b66;
+  --cyan: #1c5f85;
+  --cyan-2: #79c0e2;
+  --cyan-3: #0e3348;
+  --fixer: #c8a55a;
+  --fixer-2: #e2c682;
+  --warn: #b6553a;
+  --txt-3: #90aab8;
+}
+
+/* ============================================================
+   皮肤 3 · 银版镜庭（承袭 P3）
+   ============================================================ */
+:root[data-skin='daguerre'] {
+  --void: #101112;
+  --room-1: #17191b;
+  --room-2: #1f2225;
+  --room-3: #292d31;
+  --room-4: #383d42;
+  --paper: #eceef0;
+  --paper-2: #d7dbde;
+  --paper-3: #b8bec3;
+  --ink: #1c1e20;
+  --ink-2: #474c50;
+  --ink-3: #737a80;
+  --silver: #e2e7ea;
+  --silver-2: #a6aeb4;
+  --silver-3: #6f777d;
+  --silver-4: #414a50;
+  --safelight: #9aa7ae;
+  --safelight-2: #d5dee3;
+  --safelight-3: #5a656b;
+  --cyan: #4a6b7c;
+  --cyan-2: #8fb4c6;
+  --cyan-3: #253a45;
+  --fixer: #b9924e;
+  --fixer-2: #dcb877;
+  --warn: #94413a;
+  --txt-3: #99a1a7;
+}
+
+/* 密度：紧凑模式 */
+:root[data-density='compact'] {
+  --lh-body: 1.72;
+  --s-5: 18px;
+  --s-6: 24px;
+}
+
+/* 动效降级 */
+:root[data-motion='reduced'] { --t-fast: 1ms; --t-mid: 1ms; --t-slow: 1ms; --t-develop: 1ms; }
+@media (prefers-reduced-motion: reduce) {
+  :root { --t-fast: 1ms; --t-mid: 1ms; --t-slow: 1ms; --t-develop: 1ms; }
+}
