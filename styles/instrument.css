@@ -1,0 +1,698 @@
+/* ===========================================================
+   instrument.css —— 仪器材质层
+   水银柱 / 银铭牌 / 汞镜 / 齿轮 / 星图 / 蚀刻 / 显影
+   =========================================================== */
+
+/* =========================================================
+   星图石板背景（案台桌面）
+   ========================================================= */
+#p4-astral-slab {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-scene);
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 120% 80% at 50% -18%, color-mix(in srgb, var(--prussian) 34%, transparent), transparent 62%),
+    radial-gradient(ellipse 90% 60% at 12% 108%, color-mix(in srgb, var(--amethyst) 12%, transparent), transparent 60%),
+    linear-gradient(178deg, var(--slate-900) 0%, var(--ink-void) 100%);
+}
+#p4-astral-slab::after {
+  /* 蚀刻星座网 + 噪点 */
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: .5;
+  background-image:
+    radial-gradient(1px 1px at 12% 22%, var(--silver) 50%, transparent 51%),
+    radial-gradient(1px 1px at 28% 64%, var(--silver) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 44% 18%, var(--silver-hi) 50%, transparent 51%),
+    radial-gradient(1px 1px at 61% 51%, var(--silver) 50%, transparent 51%),
+    radial-gradient(1px 1px at 77% 29%, var(--silver) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 88% 71%, var(--silver-hi) 50%, transparent 51%),
+    radial-gradient(1px 1px at 33% 88%, var(--silver) 50%, transparent 51%),
+    radial-gradient(1px 1px at 68% 84%, var(--silver) 50%, transparent 51%);
+  animation: slab-twinkle 9s ease-in-out infinite alternate;
+}
+@keyframes slab-twinkle { from { opacity: .28; } to { opacity: .62; } }
+
+/* 颗粒纹理（叠加在最上，极轻） */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-grain);
+  pointer-events: none;
+  opacity: .13;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+
+/* =========================================================
+   银质铭牌（顶梁 / 面板头 / 标签）
+   ========================================================= */
+.nameplate {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 3px var(--s-3);
+  background: linear-gradient(176deg,
+      color-mix(in srgb, var(--silver) 20%, var(--slate-700)),
+      color-mix(in srgb, var(--slate-800) 92%, var(--silver)));
+  border: 1px solid color-mix(in srgb, var(--silver) 40%, transparent);
+  border-radius: var(--r-sm);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--silver-hi) 22%, transparent) inset,
+              0 -1px 0 rgb(0 0 0 / .5) inset;
+}
+/* 四角铆钉 */
+.nameplate::before,
+.nameplate::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 3px; height: 3px;
+  margin-top: -1.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 32%, var(--silver-hi), var(--silver-lo) 70%, #0006);
+}
+.nameplate::before { left: 4px; }
+.nameplate::after { right: 4px; }
+.nameplate > .tx {
+  font-family: var(--font-serif);
+  font-size: var(--fs-tiny);
+  font-weight: 700;
+  letter-spacing: .18em;
+  color: var(--silver-hi);
+  text-shadow: 0 1px 0 rgb(0 0 0 / .55);
+}
+
+/* 蚀刻文字（凹刻感） */
+.etched {
+  color: color-mix(in srgb, var(--silver) 78%, transparent);
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--silver-hi) 16%, transparent),
+               0 -1px 0 rgb(0 0 0 / .68);
+}
+
+/* =========================================================
+   水银柱（六维属性）—— 原型4 材质记忆点
+   ========================================================= */
+.merc-bank {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-2) var(--s-2);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--ink-void) 46%, transparent), transparent 40%),
+    color-mix(in srgb, var(--slate-800) 60%, transparent);
+  border: var(--bd-hair);
+  border-radius: var(--r-md);
+}
+.merc {
+  --fill: 50%;
+  --hue: var(--silver);
+  display: grid;
+  grid-template-rows: 1fr auto auto;
+  gap: 5px;
+  justify-items: center;
+  cursor: default;
+}
+/* 玻璃管 */
+.merc__tube {
+  position: relative;
+  width: 13px;
+  height: 96px;
+  border-radius: var(--r-pill);
+  background: linear-gradient(90deg,
+      color-mix(in srgb, var(--ink-void) 88%, transparent) 0%,
+      color-mix(in srgb, var(--slate-700) 70%, transparent) 34%,
+      color-mix(in srgb, var(--ink-void) 92%, transparent) 100%);
+  border: 1px solid color-mix(in srgb, var(--silver) 30%, transparent);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / .5), 0 2px 8px -4px rgb(0 0 0 / .9) inset;
+  overflow: hidden;
+}
+/* 液柱 */
+.merc__fluid {
+  position: absolute;
+  inset: auto 1px 1px 1px;
+  height: var(--fill);
+  border-radius: var(--r-pill);
+  background: linear-gradient(180deg,
+      color-mix(in srgb, var(--hue) 96%, white) 0%,
+      var(--hue) 22%,
+      color-mix(in srgb, var(--hue) 72%, var(--ink-void)) 100%);
+  box-shadow: 0 0 10px -2px color-mix(in srgb, var(--hue) 76%, transparent);
+  transition: height var(--t-slow) var(--ease-snap);
+}
+/* 液面弯月 */
+.merc__fluid::before {
+  content: '';
+  position: absolute;
+  inset: -2px 0 auto 0;
+  height: 4px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--hue) 60%, white);
+  filter: blur(.4px);
+}
+/* 玻璃反光 */
+.merc__tube::after {
+  content: '';
+  position: absolute;
+  inset: 2px auto 2px 2.5px;
+  width: 2.5px;
+  border-radius: var(--r-pill);
+  background: linear-gradient(180deg,
+      color-mix(in srgb, var(--silver-hi) 52%, transparent),
+      transparent 44%,
+      color-mix(in srgb, var(--silver-hi) 22%, transparent));
+  pointer-events: none;
+}
+/* 刻度 */
+.merc__scale {
+  position: absolute;
+  inset: 0 auto 0 auto;
+  right: 0;
+  width: 5px;
+  background-image: repeating-linear-gradient(180deg,
+      color-mix(in srgb, var(--silver) 42%, transparent) 0 1px,
+      transparent 1px 12px);
+  pointer-events: none;
+}
+.merc__val {
+  font-family: var(--font-mono);
+  font-size: var(--fs-tiny);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  line-height: 1;
+}
+.merc__name {
+  font-size: var(--fs-micro);
+  letter-spacing: .04em;
+  color: var(--text-dim);
+  line-height: 1;
+}
+.merc:hover .merc__name { color: var(--silver-hi); }
+.merc:hover .merc__tube { box-shadow: var(--glow-silver), 0 2px 8px -4px rgb(0 0 0 / .9) inset; }
+/* 高光扫过（数值变化时 JS 加 .is-pulse） */
+.merc.is-pulse .merc__tube::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--silver-hi) 70%, transparent), transparent);
+  animation: merc-sweep 700ms var(--ease-instrument);
+  z-index: 2;
+}
+@keyframes merc-sweep {
+  from { transform: translateY(110%); }
+  to { transform: translateY(-110%); }
+}
+
+/* 属性色相分配（灵性=紫水晶，理智=银，人性=蓝，活力=暖，敏捷=银，运气=鼠尾草） */
+.merc[data-attr='vitality'] { --hue: var(--gaslight); }
+.merc[data-attr='spirit'] { --hue: var(--amethyst-hi); }
+.merc[data-attr='sanity'] { --hue: var(--silver); }
+.merc[data-attr='humanity'] { --hue: var(--prussian-hi); }
+.merc[data-attr='agility'] { --hue: var(--silver-mid); }
+.merc[data-attr='luck'] { --hue: var(--sage-hi); }
+.merc.is-low .merc__val { color: var(--cinnabar-hi); }
+
+/* 横向紧凑水银条（面板/移动端用） */
+.merc-row {
+  --fill: 50%;
+  --hue: var(--silver);
+  display: grid;
+  grid-template-columns: 46px 1fr 58px;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--fs-tiny);
+}
+.merc-row__track {
+  position: relative;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--ink-void) 80%, transparent);
+  border: 1px solid color-mix(in srgb, var(--silver) 22%, transparent);
+  overflow: hidden;
+}
+.merc-row__track::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--fill);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--hue) 62%, var(--ink-void)), var(--hue));
+  box-shadow: 0 0 8px -2px var(--hue);
+  transition: width var(--t-slow) var(--ease-snap);
+}
+.merc-row__name { color: var(--text-faint); letter-spacing: .06em; }
+.merc-row__val { font-family: var(--font-mono); text-align: right; color: var(--text); }
+
+/* =========================================================
+   汞镜叙事池（正文载体）
+   ========================================================= */
+.mercury-pool {
+  position: relative;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--ink-void) 84%, transparent) 0%,
+      color-mix(in srgb, var(--slate-900) 92%, transparent) 100%);
+  border: 1px solid color-mix(in srgb, var(--silver) 26%, transparent);
+  border-radius: var(--r-lg);
+  box-shadow: 0 -1px 0 color-mix(in srgb, var(--silver-hi) 14%, transparent) inset,
+              0 20px 50px -26px rgb(0 0 0 / .95);
+  backdrop-filter: blur(9px) saturate(112%);
+  -webkit-backdrop-filter: blur(9px) saturate(112%);
+  overflow: hidden;
+}
+/* 镜面斜掠高光（缓慢流动） */
+.mercury-pool::before {
+  content: '';
+  position: absolute;
+  inset: -40% -10%;
+  background: linear-gradient(104deg,
+      transparent 38%,
+      color-mix(in srgb, var(--silver-hi) 7%, transparent) 48%,
+      color-mix(in srgb, var(--silver-hi) 2%, transparent) 53%,
+      transparent 62%);
+  animation: pool-sheen 11s var(--ease-mercury) infinite;
+  pointer-events: none;
+}
+@keyframes pool-sheen {
+  0%, 100% { transform: translateX(-24%); }
+  50% { transform: translateX(24%); }
+}
+/* 上下渐隐边（液面感） */
+.mercury-pool::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--ink-void) 78%, transparent), transparent 9%),
+    linear-gradient(0deg, color-mix(in srgb, var(--ink-void) 78%, transparent), transparent 9%);
+}
+
+/* 银版显影文字 */
+.develop-char {
+  display: inline;
+  opacity: 0;
+  filter: blur(3px);
+  animation: develop-in 480ms var(--ease-instrument) forwards;
+}
+@keyframes develop-in {
+  from { opacity: 0; filter: blur(3px); letter-spacing: .2em; }
+  to { opacity: 1; filter: blur(0); letter-spacing: inherit; }
+}
+
+/* 正文排版 */
+.story-body {
+  font-family: var(--font-serif);
+  font-size: var(--story-size);
+  line-height: var(--story-leading);
+  color: var(--text-story);
+  letter-spacing: .015em;
+}
+.story-body p { margin-bottom: .82em; text-indent: 1.6em; }
+.story-body p:last-child { margin-bottom: 0; }
+.story-body .dlg {
+  display: block;
+  margin: .5em 0 .82em;
+  padding-left: .9em;
+  border-left: 2px solid color-mix(in srgb, var(--gaslight) 46%, transparent);
+  text-indent: 0;
+  color: var(--gaslight-hi);
+}
+.story-body .em {
+  color: var(--silver-hi);
+  font-weight: 500;
+}
+.story-body .occult {
+  color: var(--amethyst-hi);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--amethyst) 46%, transparent);
+}
+
+/* 读心：NPC 名（观众途径序列9） */
+.mind-target {
+  position: relative;
+  color: var(--silver-hi);
+  cursor: help;
+  padding: 0 1px;
+  background-image: linear-gradient(90deg,
+      color-mix(in srgb, var(--amethyst-hi) 82%, transparent),
+      color-mix(in srgb, var(--amethyst-hi) 82%, transparent));
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: 0 1.18em;
+  transition: color var(--t-fast) linear, text-shadow var(--t-base) linear;
+}
+.mind-target:hover {
+  color: var(--amethyst-hi);
+  text-shadow: 0 0 14px color-mix(in srgb, var(--amethyst) 70%, transparent);
+}
+.mind-target[data-read='1'] { background-image: none; color: var(--amethyst-hi); }
+/* 心声批注 */
+.mind-whisper {
+  display: block;
+  margin: .35em 0 .7em 1.6em;
+  padding: var(--s-2) var(--s-3);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: calc(var(--story-size) - 1.2px);
+  line-height: 1.8;
+  color: var(--amethyst-hi);
+  text-indent: 0;
+  background: linear-gradient(100deg,
+      color-mix(in srgb, var(--amethyst) 15%, transparent),
+      transparent 78%);
+  border-left: 2px solid color-mix(in srgb, var(--amethyst-hi) 68%, transparent);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  animation: whisper-in var(--t-slow) var(--ease-instrument);
+}
+.mind-whisper::before {
+  content: '心声 · ';
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: var(--fs-micro);
+  letter-spacing: .24em;
+  color: color-mix(in srgb, var(--amethyst-hi) 72%, transparent);
+}
+@keyframes whisper-in {
+  from { opacity: 0; clip-path: inset(0 100% 0 0); transform: translateX(-6px); }
+  to { opacity: 1; clip-path: inset(0 0 0 0); transform: none; }
+}
+
+/* =========================================================
+   齿轮 / 星盘 / 灵摆
+   ========================================================= */
+.gear {
+  color: color-mix(in srgb, var(--silver) 22%, transparent);
+  animation: gear-spin var(--gear-speed) linear infinite;
+  transform-origin: 50% 50%;
+  transition: color var(--t-base) linear;
+}
+.gear--rev { animation-direction: reverse; }
+.gear:hover { color: color-mix(in srgb, var(--silver) 42%, transparent); animation-duration: calc(var(--gear-speed) / 2.5); }
+@keyframes gear-spin { to { transform: rotate(360deg); } }
+
+/* 命运之环（顶梁导航钮） */
+.fate-wheel {
+  position: relative;
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--silver) 40%, transparent);
+  background: radial-gradient(circle at 38% 32%,
+      color-mix(in srgb, var(--slate-600) 92%, var(--silver)),
+      var(--slate-900) 78%);
+  color: var(--silver);
+  transition: transform var(--t-slow) var(--ease-instrument),
+              box-shadow var(--t-base) linear, color var(--t-base) linear;
+}
+.fate-wheel::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px dashed color-mix(in srgb, var(--silver) 26%, transparent);
+  animation: gear-spin 42s linear infinite;
+}
+.fate-wheel:hover {
+  transform: rotate(72deg);
+  color: var(--silver-hi);
+  box-shadow: var(--glow-silver);
+}
+.fate-wheel[aria-expanded='true'] {
+  color: var(--amethyst-hi);
+  box-shadow: var(--glow-amethyst);
+}
+
+/* 灵摆 */
+.pendulum { transform-origin: 50% 4%; animation: pend-swing 3.4s var(--ease-mercury) infinite; }
+@keyframes pend-swing {
+  0%, 100% { transform: rotate(-17deg); }
+  50% { transform: rotate(17deg); }
+}
+.pendulum.is-settling { animation: pend-settle 4.2s cubic-bezier(.25,.1,.25,1) forwards; }
+@keyframes pend-settle {
+  0% { transform: rotate(-20deg); }
+  18% { transform: rotate(15deg); }
+  36% { transform: rotate(-10deg); }
+  54% { transform: rotate(6deg); }
+  72% { transform: rotate(-3deg); }
+  88% { transform: rotate(1deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* =========================================================
+   塔罗铜版卡（3D 翻面）
+   ========================================================= */
+.tarot { perspective: 1100px; }
+.tarot__inner {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 5 / 8;
+  transform-style: preserve-3d;
+  transition: transform 760ms var(--ease-instrument);
+  cursor: pointer;
+}
+.tarot.is-flipped .tarot__inner { transform: rotateY(180deg); }
+.tarot__face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: var(--r-md);
+  border: 1px solid color-mix(in srgb, var(--silver) 44%, transparent);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.tarot__back {
+  background:
+    repeating-conic-gradient(from 0deg at 50% 50%,
+      color-mix(in srgb, var(--prussian) 74%, transparent) 0deg 12deg,
+      color-mix(in srgb, var(--slate-900) 88%, transparent) 12deg 24deg),
+    var(--slate-900);
+  color: var(--silver);
+}
+.tarot__front {
+  transform: rotateY(180deg);
+  background: linear-gradient(168deg,
+      color-mix(in srgb, var(--paper) 96%, var(--amethyst)) 0%,
+      var(--paper-dim) 100%);
+  color: var(--paper-ink);
+  padding: var(--s-2);
+  text-align: center;
+  align-content: center;
+  gap: var(--s-1);
+}
+.tarot:hover .tarot__face { box-shadow: var(--glow-silver); }
+
+/* =========================================================
+   进度 / 环形仪表
+   ========================================================= */
+.arc-meter { position: relative; display: grid; place-items: center; }
+.arc-meter > svg { transform: rotate(-90deg); }
+.arc-meter__track { stroke: color-mix(in srgb, var(--slate-500) 88%, transparent); }
+.arc-meter__fill {
+  stroke: var(--silver-hi);
+  stroke-linecap: round;
+  transition: stroke-dashoffset var(--t-slow) var(--ease-instrument);
+}
+.arc-meter__label {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: var(--fs-tiny);
+  color: var(--text);
+}
+.arc-meter[data-tone='mystic'] .arc-meter__fill { stroke: var(--amethyst-hi); }
+.arc-meter[data-tone='warn'] .arc-meter__fill { stroke: var(--cinnabar-hi); }
+.arc-meter[data-tone='gas'] .arc-meter__fill { stroke: var(--gaslight); }
+
+/* 线性进度（消化/污染） */
+.bar {
+  position: relative;
+  height: 5px;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--ink-void) 78%, transparent);
+  border: 1px solid color-mix(in srgb, var(--silver) 18%, transparent);
+  overflow: hidden;
+}
+.bar > i {
+  display: block;
+  height: 100%;
+  width: var(--pct, 0%);
+  background: linear-gradient(90deg,
+      color-mix(in srgb, var(--silver) 40%, transparent), var(--silver-hi));
+  transition: width var(--t-slow) var(--ease-instrument);
+}
+.bar--mystic > i { background: linear-gradient(90deg, color-mix(in srgb, var(--amethyst) 50%, transparent), var(--amethyst-hi)); }
+.bar--warn > i { background: linear-gradient(90deg, color-mix(in srgb, var(--cinnabar) 50%, transparent), var(--cinnabar-hi)); }
+.bar--gas > i { background: linear-gradient(90deg, color-mix(in srgb, var(--gaslight) 46%, transparent), var(--gaslight-hi)); }
+/* 条纹流动（进行中） */
+.bar.is-live > i::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(115deg,
+      rgb(255 255 255 / .16) 0 6px, transparent 6px 12px);
+  animation: bar-flow 1.1s linear infinite;
+}
+@keyframes bar-flow { to { transform: translateX(12px); } }
+
+/* =========================================================
+   管线信号灯（顶梁四灯）
+   ========================================================= */
+.pipe-lamps { display: flex; gap: 5px; align-items: center; }
+.lamp {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 22px; height: 22px;
+  border-radius: var(--r-sm);
+  border: 1px solid color-mix(in srgb, var(--silver) 24%, transparent);
+  background: color-mix(in srgb, var(--ink-void) 70%, transparent);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  color: var(--text-faint);
+  transition: color var(--t-base) linear, box-shadow var(--t-base) linear, border-color var(--t-base) linear;
+}
+.lamp[data-on='1'] {
+  color: var(--sage-hi);
+  border-color: color-mix(in srgb, var(--sage) 56%, transparent);
+  box-shadow: 0 0 12px -3px color-mix(in srgb, var(--sage) 74%, transparent);
+}
+.lamp[data-on='1']::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 1px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--sage-hi) 26%, transparent), transparent 70%);
+  animation: lamp-breathe 2.6s var(--ease-mercury) infinite;
+}
+.lamp[data-on='busy'] {
+  color: var(--gaslight-hi);
+  border-color: color-mix(in srgb, var(--gaslight) 60%, transparent);
+  box-shadow: 0 0 14px -3px color-mix(in srgb, var(--gaslight) 80%, transparent);
+}
+@keyframes lamp-breathe { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
+
+/* =========================================================
+   场景层（背景图 + 雾 + 视差）
+   ========================================================= */
+.scene-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+.scene-layer__img {
+  position: absolute;
+  inset: -3%;
+  width: 106%;
+  height: 106%;
+  object-fit: cover;
+  filter: blur(var(--scene-blur)) saturate(.86) contrast(1.06);
+  transform: translate3d(var(--px, 0px), var(--py, 0px), 0) scale(1.04);
+  transition: filter var(--t-slow) var(--ease-mercury);
+  animation: ken-burns 42s var(--ease-mercury) infinite alternate;
+  will-change: transform;
+}
+@keyframes ken-burns {
+  from { transform: translate3d(var(--px,0px), var(--py,0px), 0) scale(1.04); }
+  to { transform: translate3d(calc(var(--px,0px) - 14px), calc(var(--py,0px) - 8px), 0) scale(1.13); }
+}
+.scene-layer__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 88% 62% at 50% 42%, transparent 24%, color-mix(in srgb, var(--ink-void) 82%, transparent) 100%),
+    linear-gradient(180deg, color-mix(in srgb, var(--ink-void) 62%, transparent) 0%, transparent 26%, color-mix(in srgb, var(--ink-void) 88%, transparent) 100%);
+  opacity: calc(.4 + var(--scene-dim));
+  transition: opacity var(--t-slow) linear;
+}
+/* 雾层流动 */
+.scene-layer__fog {
+  position: absolute;
+  inset: -20%;
+  opacity: .34;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 46% 30% at 22% 68%, color-mix(in srgb, var(--silver) 26%, transparent), transparent 62%),
+    radial-gradient(ellipse 38% 26% at 74% 40%, color-mix(in srgb, var(--prussian-hi) 22%, transparent), transparent 60%),
+    radial-gradient(ellipse 54% 22% at 50% 88%, color-mix(in srgb, var(--silver) 18%, transparent), transparent 66%);
+  animation: fog-drift 34s var(--ease-mercury) infinite alternate;
+  filter: blur(14px);
+}
+@keyframes fog-drift {
+  from { transform: translate3d(-3%, 1%, 0) scale(1.02); }
+  to { transform: translate3d(3%, -2%, 0) scale(1.12); }
+}
+/* 煤气灯光斑（唯一暖色来源） */
+.scene-layer__lamp {
+  position: absolute;
+  width: 42%;
+  aspect-ratio: 1;
+  top: -8%;
+  left: 8%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle,
+      color-mix(in srgb, var(--gaslight) 22%, transparent) 0%,
+      color-mix(in srgb, var(--gaslight) 6%, transparent) 42%,
+      transparent 70%);
+  animation: lamp-flicker 6.5s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+@keyframes lamp-flicker {
+  0%, 100% { opacity: .72; transform: scale(1); }
+  38% { opacity: .95; transform: scale(1.04); }
+  52% { opacity: .6; transform: scale(.98); }
+  71% { opacity: .88; transform: scale(1.02); }
+}
+
+/* 探索热区银点 */
+.hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  color: var(--silver-hi);
+  background: color-mix(in srgb, var(--ink-void) 48%, transparent);
+  border: 1px solid color-mix(in srgb, var(--silver-hi) 56%, transparent);
+  cursor: pointer;
+  transition: transform var(--t-base) var(--ease-snap), box-shadow var(--t-base) linear;
+}
+.hotspot::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--silver-hi) 42%, transparent);
+  animation: hotspot-pulse 2.6s var(--ease-mercury) infinite;
+}
+@keyframes hotspot-pulse {
+  0% { transform: scale(.7); opacity: .9; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+.hotspot:hover { transform: translate(-50%, -50%) scale(1.22); box-shadow: var(--glow-silver); }
+.hotspot__tip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  padding: 3px var(--s-2);
+  font-size: var(--fs-tiny);
+  letter-spacing: .1em;
+  white-space: nowrap;
+  color: var(--silver-hi);
+  background: color-mix(in srgb, var(--ink-void) 90%, transparent);
+  border: var(--bd-silver);
+  border-radius: var(--r-sm);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-fast) linear, transform var(--t-fast) var(--ease-instrument);
+}
+.hotspot:hover .hotspot__tip,
+.hotspot:focus-visible .hotspot__tip { opacity: 1; transform: translateX(-50%) translateY(0); }
+.hotspot[data-found='1'] { color: var(--sage-hi); border-color: color-mix(in srgb, var(--sage) 62%, transparent); }
+.hotspot[data-found='1']::after { animation: none; opacity: 0; }

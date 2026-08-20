@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-skin="" data-motion="" data-fx="on">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="诡秘剧场 · 前端原型4「汞镜案台」——《诡秘之主》AIRP 重制版前端原型，零构建零依赖静态页。">
+<title>诡秘剧场 · 汞镜案台 · 前端原型4</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,300;1,500&family=Noto+Serif+SC:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/instrument.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/panels.css">
+<link rel="stylesheet" href="styles/docket.css">
+<link rel="stylesheet" href="styles/motion.css">
+</head>
+
+<body data-device="pc">
+
+<!-- ============ 星图石板背景（案台桌面） ============ -->
+<div id="p4-astral-slab" aria-hidden="true"></div>
+<canvas id="p4-motes" aria-hidden="true"></canvas>
+<div class="grain-overlay" aria-hidden="true"></div>
+
+<!-- ============ 主界面 ============ -->
+<div id="p4-app" aria-hidden="true">
+
+  <!-- 顶梁：银质铭牌横梁 -->
+  <header id="p4-beam" aria-label="顶梁：铭牌、世界时钟、管线状态与导航"></header>
+
+  <!-- 左仪表塔 -->
+  <nav id="p4-tower" data-collapsed="0" aria-label="左仪表塔：角色状态与快捷入口">
+    <div id="p4-tower-rail" class="tower__rail" role="toolbar" aria-label="仪表塔图标轨道"></div>
+    <div id="p4-tower-body" class="tower__body"></div>
+  </nav>
+
+  <!-- 中央舞台 -->
+  <main id="p4-stage" data-mode="strip" aria-label="叙事舞台">
+    <section id="p4-stage-view" class="stage__view" aria-label="场景与正文"></section>
+    <section id="p4-composer" class="composer" aria-label="行动输入区"></section>
+  </main>
+
+  <!-- 右卷宗栏 -->
+  <aside id="p4-dossier" data-collapsed="0" aria-label="右卷宗栏：世界动态、在场人物与卷宗速取">
+    <div id="p4-dossier-body" class="dossier__body"></div>
+    <div id="p4-dossier-rail" class="dossier__rail" role="toolbar" aria-label="卷宗栏图标轨道"></div>
+  </aside>
+
+  <!-- 底部银轨（Dock） -->
+  <footer id="p4-rail" aria-label="银轨：窗口停靠与回合操作">
+    <div id="p4-rail-left" class="rail__group"></div>
+    <div id="p4-dock-strip" role="toolbar" aria-label="已开窗口停靠区"></div>
+    <div id="p4-rail-right" class="rail__group"></div>
+  </footer>
+
+  <!-- 移动端底部标签栏 -->
+  <nav id="p4-tabbar" aria-label="移动端主导航"></nav>
+</div>
+
+<!-- ============ 多窗口案台 ============ -->
+<div id="p4-docket" aria-label="案台窗口层"></div>
+
+<!-- ============ 灰雾星图启动器（签名元素） ============ -->
+<div id="p4-fog" data-open="0" role="dialog" aria-modal="true" aria-labelledby="p4-fog-title">
+  <div class="fog__head">
+    <div id="p4-fog-title" class="zh">灰雾星图</div>
+    <div class="lat">CONSTELLATION OF THE GREY FOG</div>
+    <div class="hint">方向键游走 · Enter 打开 · Esc 退出 · 二十二颗星按功能族连线</div>
+  </div>
+  <div id="p4-constellation" aria-label="面板星座"></div>
+  <div class="fog__foot">
+    <p id="p4-fog-desc">悬停一颗星，看看它是什么。</p>
+    <div class="fog__legend">
+      <span style="color:var(--gaslight)"><i></i>自身</span>
+      <span style="color:var(--prussian-hi)"><i></i>世界</span>
+      <span style="color:var(--silver)"><i></i>记忆</span>
+      <span style="color:var(--amethyst)"><i></i>神秘</span>
+      <span style="color:var(--sage)"><i></i>工坊</span>
+      <span style="color:var(--silver-lo)"><i></i>酒馆</span>
+      <span style="color:var(--hairline)"><i></i>系统</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 移动端底部抽屉 ============ -->
+<div id="p4-sheet-scrim" data-open="0" aria-hidden="true"></div>
+<section id="p4-sheet" data-open="0" role="dialog" aria-modal="false" aria-labelledby="p4-sheet-title">
+  <div id="p4-sheet-grip" class="sheet__grip" role="button" tabindex="0" aria-label="收起抽屉"></div>
+  <header class="sheet__head">
+    <h2 id="p4-sheet-title" class="sheet__title">抽屉</h2>
+  </header>
+  <div id="p4-sheet-body" class="sheet__body"></div>
+</section>
+
+<!-- ============ 内部通知系统（不使用任何浏览器原生弹窗） ============ -->
+<div id="p4-toasts" aria-live="polite" aria-label="显影通知"></div>
+<div id="p4-confirm-scrim" data-open="0"></div>
+<div id="p4-valve" data-open="0" aria-live="assertive"></div>
+
+<!-- ============ 登录页 ============ -->
+<div id="p4-gate" hidden aria-label="入场：诡秘剧场">
+  <section id="p4-gate-scene" class="gate__scene" aria-hidden="true"></section>
+  <section id="p4-gate-panel" class="gate__panel" aria-label="入场选项"></section>
+</div>
+
+<!-- ============ 开场序列 ============ -->
+<div id="p4-overture" data-phase="title"></div>
+
+<!-- 银镜过场（独立于开场层，因此能覆盖登录页） -->
+<div id="p4-mirror" data-phase="idle" aria-hidden="true">
+  <div class="mirror-shard mirror-shard--l"></div>
+  <div class="mirror-shard mirror-shard--r"></div>
+</div>
+
+<script src="scripts/icons.js"></script>
+<script src="scripts/core.js"></script>
+<script src="scripts/data.js"></script>
+<script src="scripts/fx.js"></script>
+<script src="scripts/notify.js"></script>
+<script src="scripts/docket.js"></script>
+<script src="scripts/stage.js"></script>
+<script src="scripts/panels-a.js"></script>
+<script src="scripts/panels-b.js"></script>
+<script src="scripts/panels-c.js"></script>
+<script src="scripts/app.js"></script>
+</body>
+</html>

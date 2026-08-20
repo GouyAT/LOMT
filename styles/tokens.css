@@ -1,0 +1,213 @@
+/* ===========================================================
+   诡秘剧场 · 原型4「汞镜案台」—— 设计令牌
+   冷银 / 石板靛 / 普鲁士蓝 · 界面冷、故事暖
+   =========================================================== */
+
+:root {
+  /* ---- 60% 中性打底：石板靛 ---- */
+  --ink-void: #05070b;
+  --slate-900: #0a0e15;
+  --slate-800: #101722;
+  --slate-700: #17202e;
+  --slate-600: #1f2b3b;
+  --slate-500: #2b3a4d;
+  --hairline: #35455a;
+
+  /* ---- 30% 结构与金属：冷银 + 普鲁士蓝 ---- */
+  --silver: #b6c2cd;
+  --silver-hi: #eaf1f6;
+  --silver-mid: #8a99a7;
+  --silver-lo: #788593;
+  --prussian: #1b3c60;
+  --prussian-hi: #2f6ea8;
+  --prussian-lo: #12283f;
+
+  /* ---- 10% 强调：各司其职，绝不混用 ---- */
+  --gaslight: #e0a45c;   /* 只在舞台/故事层与当前回合 */
+  --gaslight-hi: #f6d09a;
+  --amethyst: #8b78b8;   /* 灵性 / 神秘学 / 占卜 */
+  --amethyst-hi: #b9a5e0;
+  --cinnabar: #c0483c;   /* 只用于警示 / 危险 / 失控 */
+  --cinnabar-hi: #e0776a;
+  --sage: #7f9c6e;       /* 只用于成功 / 已完成 */
+  --sage-hi: #a6c093;
+
+  /* ---- 纸质（面板内容） ---- */
+  --paper: #e7e4dc;
+  --paper-dim: #cbc7bd;
+  --paper-ink: #2a2f36;
+  --paper-ink-dim: #5b6470;
+  --blueprint: #0e2c46;
+
+  /* ---- 文字 ---- */
+  --text: #d4dde5;
+  --text-dim: #9dabb8;
+  --text-faint: #8592a0;
+  --text-story: #e9e2d4;      /* 舞台正文：偏暖的象牙 */
+  --text-story-dim: #b9ae99;
+
+  /* ---- 字体角色 ---- */
+  --font-display: 'Cormorant Garamond', 'Noto Serif SC', 'Source Han Serif SC', Georgia, serif;
+  --font-serif: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'SimSun', Georgia, serif;
+  --font-sans: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, Consolas, monospace;
+
+  /* ---- 字号阶梯 ---- */
+  --fs-micro: 10px;
+  --fs-tiny: 11px;
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-md: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 19px;
+  --fs-2xl: 24px;
+  --fs-3xl: 32px;
+  --fs-4xl: 46px;
+  --fs-hero: clamp(38px, 7.4vw, 92px);
+  --fs-story: 15.5px;
+
+  /* ---- 4px 网格间距 ---- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-12: 48px;
+
+  /* ---- 圆角：刻意接近直角（仪器/蚀刻板不圆润） ---- */
+  --r-sm: 2px;
+  --r-md: 3px;
+  --r-lg: 5px;
+  --r-pill: 999px;
+
+  /* ---- 动效曲线与时长 ---- */
+  --ease-instrument: cubic-bezier(.16, .84, .24, 1);
+  --ease-mercury: cubic-bezier(.4, 0, .2, 1);
+  --ease-snap: cubic-bezier(.34, 1.56, .64, 1);
+  --t-fast: 140ms;
+  --t-base: 240ms;
+  --t-slow: 420ms;
+  --t-cine: 900ms;
+
+  /* ---- 层级 ---- */
+  --z-scene: 0;
+  --z-stage: 10;
+  --z-rail: 20;
+  --z-dock: 40;
+  --z-sheet: 70;
+  --z-window: 100;
+  --z-fog: 800;
+  --z-curtain: 1100;
+  --z-gate: 1120;
+  --z-motes: 1155;
+  --z-grain: 1160;
+  --z-mirror: 1180;
+  --z-toast: 1250;
+  --z-confirm: 1300;
+  --z-valve: 1350;
+
+  /* ---- 材质：银 / 玻璃 / 蓝晒 ---- */
+  --grad-silver: linear-gradient(150deg,
+      color-mix(in srgb, var(--silver-hi) 74%, transparent) 0%,
+      color-mix(in srgb, var(--silver) 46%, transparent) 26%,
+      color-mix(in srgb, var(--silver-lo) 34%, transparent) 52%,
+      color-mix(in srgb, var(--silver) 40%, transparent) 74%,
+      color-mix(in srgb, var(--silver-hi) 58%, transparent) 100%);
+  --grad-plate: linear-gradient(178deg,
+      color-mix(in srgb, var(--slate-700) 96%, var(--silver)) 0%,
+      var(--slate-800) 42%,
+      var(--slate-900) 100%);
+  --grad-glass: linear-gradient(100deg,
+      transparent 0%,
+      color-mix(in srgb, var(--silver-hi) 16%, transparent) 44%,
+      color-mix(in srgb, var(--silver-hi) 4%, transparent) 56%,
+      transparent 100%);
+
+  --bd-hair: 1px solid color-mix(in srgb, var(--hairline) 82%, transparent);
+  --bd-silver: 1px solid color-mix(in srgb, var(--silver) 34%, transparent);
+  --bd-silver-hi: 1px solid color-mix(in srgb, var(--silver) 62%, transparent);
+
+  --sh-plate: 0 1px 0 color-mix(in srgb, var(--silver-hi) 9%, transparent) inset,
+              0 -1px 0 color-mix(in srgb, var(--ink-void) 60%, transparent) inset,
+              0 8px 26px -14px rgb(0 0 0 / .8);
+  --sh-window: 0 1px 0 color-mix(in srgb, var(--silver-hi) 12%, transparent) inset,
+               0 28px 68px -22px rgb(0 0 0 / .92),
+               0 0 0 1px color-mix(in srgb, var(--silver) 22%, transparent);
+  --sh-lift: 0 12px 30px -16px rgb(0 0 0 / .85);
+  --glow-silver: 0 0 0 1px color-mix(in srgb, var(--silver-hi) 46%, transparent),
+                 0 0 18px -4px color-mix(in srgb, var(--silver-hi) 34%, transparent);
+  --glow-amethyst: 0 0 22px -6px color-mix(in srgb, var(--amethyst-hi) 62%, transparent);
+  --glow-gaslight: 0 0 26px -6px color-mix(in srgb, var(--gaslight) 52%, transparent);
+
+  /* ---- 可调运行时参数（JS 写入） ---- */
+  --scene-blur: 0px;
+  --scene-dim: .34;
+  --gear-speed: 34s;
+  --story-size: 15.5px;
+  --story-leading: 1.92;
+}
+
+/* ============ 主题皮肤 2：蓝晒工程图（Cyanotype） ============ */
+:root[data-skin='cyanotype'] {
+  --ink-void: #04121e;
+  --slate-900: #071d2e;
+  --slate-800: #0b2739;
+  --slate-700: #103148;
+  --slate-600: #163f5b;
+  --slate-500: #1d4e6f;
+  --hairline: #275d80;
+  --silver: #cfe0ea;
+  --silver-hi: #f2f8fb;
+  --silver-mid: #9fb9c9;
+  --silver-lo: #6c8ba0;
+  --prussian: #14496f;
+  --prussian-hi: #3f8cc4;
+  --text: #d9e8f1;
+  --text-dim: #97b3c4;
+  --gaslight: #d7b06a;
+  --amethyst: #7f8fd0;
+  --amethyst-hi: #a9b6ea;
+}
+
+/* ============ 主题皮肤 3：银版暗房（Daguerreotype，近单色） ============ */
+:root[data-skin='daguerreo'] {
+  --ink-void: #08090a;
+  --slate-900: #0d0f11;
+  --slate-800: #14171a;
+  --slate-700: #1c2024;
+  --slate-600: #262b31;
+  --slate-500: #333a41;
+  --hairline: #3e464e;
+  --silver: #c4c7c9;
+  --silver-hi: #f0f2f3;
+  --silver-mid: #93989c;
+  --silver-lo: #63696e;
+  --prussian: #3a4046;
+  --prussian-hi: #6e777f;
+  --amethyst: #9a8fa6;
+  --amethyst-hi: #c0b4cc;
+  --gaslight: #cfae7d;
+  --gaslight-hi: #e8d2ad;
+  --text: #d5d8da;
+  --text-dim: #979da2;
+  --paper: #e4e2dd;
+  --blueprint: #24282c;
+}
+
+/* ============ 动效级别（设置面板可调） ============ */
+:root[data-motion='reduced'] {
+  --t-fast: 1ms;
+  --t-base: 1ms;
+  --t-slow: 1ms;
+  --t-cine: 1ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-fast: 1ms;
+    --t-base: 1ms;
+    --t-slow: 1ms;
+    --t-cine: 1ms;
+  }
+}

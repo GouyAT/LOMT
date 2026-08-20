@@ -1,0 +1,168 @@
+/* ===========================================================
+   motion.css —— 进入编排 / 微交互 / 动效降级
+   =========================================================== */
+
+/* =========================================================
+   主界面进入编排（一个编排好的时刻，胜过散乱特效）
+   ========================================================= */
+#p4-app.is-live #p4-beam { animation: enter-beam 620ms var(--ease-instrument) both; }
+#p4-app.is-live #p4-tower { animation: enter-left 700ms 90ms var(--ease-instrument) both; }
+#p4-app.is-live #p4-dossier { animation: enter-right 700ms 150ms var(--ease-instrument) both; }
+#p4-app.is-live #p4-rail { animation: enter-rail 620ms 220ms var(--ease-instrument) both; }
+#p4-app.is-live #p4-pool { animation: enter-pool 820ms 280ms var(--ease-instrument) both; }
+
+@keyframes enter-beam { from { opacity: 0; transform: translateY(-100%); } to { opacity: 1; transform: none; } }
+@keyframes enter-left { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+@keyframes enter-right { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+@keyframes enter-rail { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: none; } }
+@keyframes enter-pool { from { opacity: 0; transform: translateY(26px) scale(.985); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
+
+/* 侧栏内元素逐条落位 */
+#p4-app.is-live .tower__body > *,
+#p4-app.is-live .dossier__body > * { animation: stack-in 520ms var(--ease-instrument) both; }
+#p4-app.is-live .tower__body > *:nth-child(1), #p4-app.is-live .dossier__body > *:nth-child(1) { animation-delay: 240ms; }
+#p4-app.is-live .tower__body > *:nth-child(2), #p4-app.is-live .dossier__body > *:nth-child(2) { animation-delay: 300ms; }
+#p4-app.is-live .tower__body > *:nth-child(3), #p4-app.is-live .dossier__body > *:nth-child(3) { animation-delay: 360ms; }
+#p4-app.is-live .tower__body > *:nth-child(4), #p4-app.is-live .dossier__body > *:nth-child(4) { animation-delay: 420ms; }
+#p4-app.is-live .tower__body > *:nth-child(5), #p4-app.is-live .dossier__body > *:nth-child(5) { animation-delay: 480ms; }
+#p4-app.is-live .tower__body > *:nth-child(6), #p4-app.is-live .dossier__body > *:nth-child(6) { animation-delay: 540ms; }
+@keyframes stack-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* 行动拨片逐条 */
+.acts > .act { animation: act-in 420ms var(--ease-instrument) both; }
+.acts > .act:nth-child(1) { animation-delay: 40ms; }
+.acts > .act:nth-child(2) { animation-delay: 100ms; }
+.acts > .act:nth-child(3) { animation-delay: 160ms; }
+.acts > .act:nth-child(4) { animation-delay: 220ms; }
+.acts > .act:nth-child(5) { animation-delay: 280ms; }
+@keyframes act-in { from { opacity: 0; transform: translateX(-14px); } to { opacity: 1; transform: none; } }
+
+/* 面板内区块入场 */
+.win__body > section,
+.win__body > .panel-block { animation: block-in 380ms var(--ease-instrument) both; }
+.win__body > *:nth-child(2) { animation-delay: 40ms; }
+.win__body > *:nth-child(3) { animation-delay: 80ms; }
+.win__body > *:nth-child(4) { animation-delay: 120ms; }
+.win__body > *:nth-child(5) { animation-delay: 160ms; }
+@keyframes block-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* 标签页切换 */
+.tabpanel { animation: tab-in var(--t-base) var(--ease-instrument); }
+@keyframes tab-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+/* =========================================================
+   微交互补充
+   ========================================================= */
+
+/* 数值跳动（JS 加 .is-tick） */
+.is-tick { animation: num-tick 460ms var(--ease-snap); }
+@keyframes num-tick {
+  0% { transform: scale(1); }
+  38% { transform: scale(1.22); color: var(--silver-hi); }
+  100% { transform: scale(1); }
+}
+
+/* 新回合闪现（正文头部） */
+.round-flash { animation: round-flash 900ms var(--ease-instrument); }
+@keyframes round-flash {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--gaslight) 60%, transparent); }
+  100% { box-shadow: 0 0 0 22px transparent; }
+}
+
+/* 微尘粒子画布 */
+#p4-motes {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-motes);
+  pointer-events: none;
+  opacity: .38;
+}
+
+/* 加载：显影转盘 */
+.developing {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 18px; height: 18px;
+}
+.developing::before,
+.developing::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid transparent;
+}
+.developing::before {
+  inset: 0;
+  border-top-color: var(--silver-hi);
+  border-right-color: color-mix(in srgb, var(--silver) 40%, transparent);
+  animation: gear-spin 900ms linear infinite;
+}
+.developing::after {
+  inset: 4px;
+  border-bottom-color: color-mix(in srgb, var(--amethyst-hi) 78%, transparent);
+  animation: gear-spin 1400ms linear infinite reverse;
+}
+
+/* 骨架显影（内容加载中，不用灰块占位而用银盐显影感） */
+.develop-skeleton {
+  background: linear-gradient(100deg,
+      color-mix(in srgb, var(--slate-700) 70%, transparent) 0%,
+      color-mix(in srgb, var(--slate-600) 88%, transparent) 42%,
+      color-mix(in srgb, var(--slate-700) 70%, transparent) 84%);
+  background-size: 260% 100%;
+  border-radius: var(--r-sm);
+  animation: skel-sweep 1500ms var(--ease-mercury) infinite;
+}
+@keyframes skel-sweep { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+
+/* 悬停抬升通用工具 */
+.lift { transition: transform var(--t-base) var(--ease-instrument), box-shadow var(--t-base) linear; }
+.lift:hover { transform: translateY(-2px); box-shadow: var(--sh-lift); }
+
+/* 焦点内容高亮扫过 */
+.flash-target { animation: flash-target 1200ms var(--ease-instrument); }
+@keyframes flash-target {
+  0% { background-color: color-mix(in srgb, var(--gaslight) 26%, transparent); }
+  100% { background-color: transparent; }
+}
+
+/* =========================================================
+   动效降级：reduced-motion / 设置面板「关闭动效」
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+  .scene-layer__img { animation: none !important; transform: none !important; }
+  #p4-motes, .grain-overlay, .scene-layer__fog, .scene-layer__lamp { display: none !important; }
+  .gear, .fate-wheel::after, .const-node__star::after { animation: none !important; }
+  .mercury-pool::before { display: none !important; }
+}
+
+:root[data-motion='off'] *,
+:root[data-motion='off'] *::before,
+:root[data-motion='off'] *::after {
+  animation-duration: 1ms !important;
+  animation-iteration-count: 1 !important;
+  animation-delay: 0ms !important;
+  transition-duration: 1ms !important;
+}
+:root[data-motion='off'] #p4-motes,
+:root[data-motion='off'] .grain-overlay,
+:root[data-motion='off'] .scene-layer__fog,
+:root[data-motion='off'] .scene-layer__lamp,
+:root[data-motion='off'] .mercury-pool::before { display: none !important; }
+:root[data-motion='off'] .scene-layer__img { animation: none !important; }
+
+/* 关闭特效（性能档） */
+:root[data-fx='off'] #p4-motes,
+:root[data-fx='off'] .grain-overlay,
+:root[data-fx='off'] .scene-layer__fog,
+:root[data-fx='off'] .scene-layer__lamp { display: none !important; }
+:root[data-fx='off'] .mercury-pool { backdrop-filter: none; -webkit-backdrop-filter: none; }
+:root[data-fx='off'] #p4-fog { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgb(4 6 10 / .96); }
