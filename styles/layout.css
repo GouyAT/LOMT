@@ -212,11 +212,9 @@
 .scene-tag {
   display: flex; align-items: center; gap: var(--s-2);
   padding: 4px var(--s-3);
-  background: color-mix(in srgb, var(--void) 76%, transparent);
+  background: color-mix(in srgb, var(--void) 86%, transparent);
   border: 1px solid var(--line-soft);
   border-radius: var(--r-pill);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   pointer-events: none;
 }
 .scene-tag .zh { font-family: var(--f-serif); font-size: var(--fs-2xs); letter-spacing: .14em; color: var(--paper); }
@@ -228,11 +226,9 @@
   min-height: 30px; padding: 0 var(--s-3);
   font-size: var(--fs-3xs); letter-spacing: .14em;
   color: var(--paper);
-  background: color-mix(in srgb, var(--void) 76%, transparent);
+  background: color-mix(in srgb, var(--void) 86%, transparent);
   border: 1px solid var(--line-strong);
   border-radius: var(--r-pill);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   transition: border-color var(--t-fast) linear, background var(--t-fast) linear, transform var(--t-fast) var(--ease-out);
 }
 #p5-btn-mode:hover { border-color: var(--safelight-2); background: color-mix(in srgb, var(--safelight) 20%, transparent); transform: translateY(-1px); }
@@ -622,8 +618,6 @@ body[data-device='mobile'] #p5-app { grid-template-areas: 'beam' 'stage' 'bench'
 }
 #p5-drawer-scrim[data-open='1'] {
   opacity: 1; pointer-events: auto; visibility: visible;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
 }
 
 /* 移动端样张：一列 3 格，触控目标够大 */

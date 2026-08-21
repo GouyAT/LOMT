@@ -185,8 +185,6 @@ body[data-device='mobile'] #p5-toasts { top: calc(46px + var(--s-2)); left: var(
 }
 #p5-timer-scrim[data-open='1'] {
   opacity: 1; pointer-events: auto; visibility: visible;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
 }
 .timer-box {
   position: relative;
