@@ -49,6 +49,12 @@
       global.setTimeout(function () {
         ov.dataset.phase = 'gone';
         if (mirror) mirror.dataset.phase = 'idle';
+        /* 彻底退出：淡出完成后 hidden + 删节点。
+           个别 Chrome 版本会把「opacity:0 但仍在合成的全屏层」画出来，造成整屏均匀灰罩。 */
+        global.setTimeout(function () {
+          ov.hidden = true;
+          if (mirror && mirror.parentNode) mirror.parentNode.removeChild(mirror);
+        }, 980);
       }, 1080);
     }
     ov.addEventListener('click', enter);

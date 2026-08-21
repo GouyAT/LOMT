@@ -476,9 +476,10 @@ body[data-device='mobile'] #p4-toasts { top: 54px; left: var(--s-2); right: var(
   border-bottom: 1px solid color-mix(in srgb, var(--cinnabar-hi) 60%, transparent);
   box-shadow: 0 10px 30px -14px color-mix(in srgb, var(--cinnabar) 66%, transparent);
   transform: translateY(-110%);
-  transition: transform var(--t-slow) var(--ease-instrument);
+  visibility: hidden;
+  transition: transform var(--t-slow) var(--ease-instrument), visibility 0s var(--t-slow);
 }
-#p4-valve[data-open='1'] { transform: translateY(0); }
+#p4-valve[data-open='1'] { transform: translateY(0); visibility: visible; }
 #p4-valve .ic { color: var(--cinnabar-hi); flex: none; }
 #p4-valve .tx { font-family: var(--font-serif); font-size: var(--fs-xs); color: #ffe4df; letter-spacing: .08em; flex: 1; }
 #p4-valve .tx b { color: #fff; }
@@ -507,9 +508,13 @@ body[data-device='mobile'] #p4-toasts { top: 54px; left: var(--s-2); right: var(
     radial-gradient(ellipse 60% 40% at 50% 48%, color-mix(in srgb, var(--prussian) 34%, transparent), transparent 70%),
     linear-gradient(178deg, var(--slate-900), var(--ink-void));
   cursor: pointer;
-  transition: opacity var(--t-cine) linear;
+  transition: opacity var(--t-cine) linear, visibility 0s var(--t-cine);
 }
-#p4-overture[data-phase='gone'] { opacity: 0; pointer-events: none; }
+#p4-overture[data-phase='gone'] {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;   /* 彻底退出合成：opacity:0 的全屏层在个别 Chrome 版本仍会被画出来（整屏灰罩的元凶） */
+}
 
 .overture__inner { position: relative; display: grid; place-items: center; gap: var(--s-4); text-align: center; }
 /* 汞珠汇聚环 */

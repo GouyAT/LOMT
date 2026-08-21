@@ -98,7 +98,7 @@ ok('钱包读数常驻银轨', /镑/.test(purse), purse.trim());
 
 /* ---------- 5c. 关闭态浮层不得参与合成（整页发灰的元凶） ---------- */
 const idleOverlays = await page.evaluate(() => {
-  const ids = ['p4-fog', 'p4-confirm-scrim', 'p4-sheet-scrim'];
+  const ids = ['p4-fog', 'p4-confirm-scrim', 'p4-sheet-scrim', 'p4-overture', 'p4-valve', 'p4-sheet'];
   return ids.map((id) => {
     const el = document.getElementById(id);
     if (!el) return { id, missing: true };
@@ -134,6 +134,14 @@ const synthHazards = await page.evaluate(() => {
 });
 ok('可见元素零 backdrop-filter / 零 mix-blend-mode（Chrome 133 发灰防护）',
   synthHazards.length === 0, synthHazards.slice(0, 6).join(' '));
+
+/* 过场节点必须彻底移除 */
+const removedNodes = await page.evaluate(() => ({
+  mirror: !!document.getElementById('p4-mirror'),
+  overtureHidden: !!document.getElementById('p4-overture') && document.getElementById('p4-overture').hidden
+}));
+ok('银镜过场节点已从 DOM 移除、开场层已 hidden',
+  !removedNodes.mirror && removedNodes.overtureHidden, JSON.stringify(removedNodes));
 /* ---------- 6. 全站 ID 唯一 ---------- */
 const dupIds = await page.evaluate(() => {
   const seen = new Map();

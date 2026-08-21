@@ -884,9 +884,10 @@ body[data-device='mobile'] #p4-tabbar {
   border-radius: 12px 12px 0 0;
   box-shadow: 0 -24px 60px -20px rgb(0 0 0 / .95);
   transform: translateY(calc(100% + 54px));
-  transition: transform var(--t-slow) var(--ease-instrument);
+  visibility: hidden;
+  transition: transform var(--t-slow) var(--ease-instrument), visibility 0s var(--t-slow);
 }
-#p4-sheet[data-open='1'] { transform: translateY(0); }
+#p4-sheet[data-open='1'] { transform: translateY(0); visibility: visible; }
 .sheet__grip {
   display: grid;
   place-items: center;
