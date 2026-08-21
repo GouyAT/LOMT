@@ -211,3 +211,32 @@
     --t-cine: 1ms;
   }
 }
+
+/* ============================================================
+   兼容加固 A：mix-blend-mode 不支持时隐藏颗粒层
+   否则 overlay 退化为 normal，噪点图本身是中灰 → 整页糊上一层灰
+   ============================================================ */
+@supports not (mix-blend-mode: overlay) {
+  .grain-overlay { display: none !important; }
+}
+
+/* ============================================================
+   兼容加固 B：不支持 color-mix() 的旧浏览器
+   （Chrome <111 / Firefox <113 / Safari <16.2 / 老 WebView）
+   把由 color-mix 派生的语义令牌回退成等效实色，保住边框、底色与阴影
+   ============================================================ */
+@supports not (color: color-mix(in srgb, red, blue)) {
+  :root {
+    --bd-hair: 1px solid rgba(53, 69, 90, .82);
+    --bd-silver: 1px solid rgba(182, 194, 205, .34);
+    --bd-silver-hi: 1px solid rgba(182, 194, 205, .62);
+    --grad-plate: linear-gradient(178deg, #1b2430 0%, #101722 42%, #0a0e15 100%);
+    --grad-glass: linear-gradient(100deg, transparent 0%, rgba(234, 241, 246, .16) 44%, rgba(234, 241, 246, .04) 56%, transparent 100%);
+    --grad-silver: linear-gradient(150deg, rgba(234, 241, 246, .74) 0%, rgba(182, 194, 205, .46) 26%, rgba(93, 107, 121, .34) 52%, rgba(182, 194, 205, .4) 74%, rgba(234, 241, 246, .58) 100%);
+    --sh-plate: inset 0 1px 0 rgba(234, 241, 246, .09), inset 0 -1px 0 rgba(5, 7, 11, .6), 0 8px 26px -14px rgba(0, 0, 0, .8);
+    --sh-window: inset 0 1px 0 rgba(234, 241, 246, .12), 0 28px 68px -22px rgba(0, 0, 0, .92), 0 0 0 1px rgba(182, 194, 205, .22);
+    --glow-silver: 0 0 0 1px rgba(234, 241, 246, .46), 0 0 18px -4px rgba(234, 241, 246, .34);
+    --glow-amethyst: 0 0 22px -6px rgba(185, 165, 224, .62);
+    --glow-gaslight: 0 0 26px -6px rgba(224, 164, 92, .52);
+  }
+}

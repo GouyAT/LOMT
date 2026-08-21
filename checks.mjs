@@ -96,6 +96,26 @@ ok('银轨「重演本回合」按钮存在', await page.locator('#p4-rail-rerol
 const purse = await page.textContent('#p4-rail-purse');
 ok('钱包读数常驻银轨', /镑/.test(purse), purse.trim());
 
+/* ---------- 5c. 关闭态浮层不得参与合成（整页发灰的元凶） ---------- */
+const idleOverlays = await page.evaluate(() => {
+  const ids = ['p4-fog', 'p4-confirm-scrim', 'p4-sheet-scrim'];
+  return ids.map((id) => {
+    const el = document.getElementById(id);
+    if (!el) return { id, missing: true };
+    const s = getComputedStyle(el);
+    return {
+      id,
+      open: el.dataset.open === '1',
+      vis: s.visibility,
+      bf: (s.backdropFilter || s.webkitBackdropFilter || 'none')
+    };
+  });
+});
+const leaky = idleOverlays.filter((o) => !o.missing && !o.open && (o.vis !== 'hidden' || (o.bf && o.bf !== 'none')));
+ok('关闭态浮层已彻底退出合成（visibility:hidden + backdrop-filter:none）',
+  leaky.length === 0,
+  leaky.length ? leaky.map((o) => `${o.id}:${o.vis}/${o.bf}`).join(' ') : idleOverlays.map((o) => o.id).join(','));
+
 /* ---------- 6. 全站 ID 唯一 ---------- */
 const dupIds = await page.evaluate(() => {
   const seen = new Map();

@@ -465,6 +465,20 @@
 
     buildOverture();
 
+    /* 浏览器能力自检：不达标时用内部通知说清原因，不让玩家对着一片灰发愣 */
+    global.setTimeout(function () {
+      var lacks = [];
+      try {
+        if (!(global.CSS && CSS.supports && CSS.supports('color', 'color-mix(in srgb, red, blue)'))) lacks.push('color-mix()');
+        if (!(global.CSS && CSS.supports && (CSS.supports('backdrop-filter', 'blur(2px)') || CSS.supports('-webkit-backdrop-filter', 'blur(2px)')))) lacks.push('backdrop-filter');
+        if (!(global.CSS && CSS.supports && CSS.supports('mix-blend-mode', 'overlay'))) lacks.push('mix-blend-mode');
+      } catch (e) { /* 老浏览器连 CSS.supports 都没有 */ lacks.push('CSS.supports'); }
+      if (lacks.length) {
+        P4.notify.valve('你的浏览器不支持 <b>' + lacks.join(' / ') + '</b>，界面已自动降级为实色方案，观感会比设计稿平一些。' +
+          '建议用 Chrome 111+ / Edge 111+ / Firefox 113+ / Safari 16.4+ 打开。', { sticky: true });
+      }
+    }, 2400);
+
     /* 全局错误也走内部通知，绝不弹浏览器框 */
     global.addEventListener('error', function (ev) {
       P4.notify.valve('前端捕获到一处异常：<b>' + String(ev.message).slice(0, 90) + '</b>。界面已继续运行。', { life: 6000 });
