@@ -233,13 +233,14 @@ body[data-device='mobile'] #p5-toasts { top: calc(46px + var(--s-2)); left: var(
   z-index: var(--z-leak);
   pointer-events: none;
   opacity: 0;
-  transition: opacity var(--t-mid) linear;
+  visibility: hidden;
+  transition: opacity var(--t-mid) linear, visibility 0s var(--t-mid);
   background:
     linear-gradient(90deg, color-mix(in srgb, var(--warn) 34%, transparent) 0%, transparent 14%),
     linear-gradient(270deg, color-mix(in srgb, var(--warn) 28%, transparent) 0%, transparent 12%),
     linear-gradient(180deg, color-mix(in srgb, var(--warn) 22%, transparent) 0%, transparent 9%);
 }
-#p5-leak[data-open='1'] { opacity: 1; animation: leak-flicker 1.4s var(--ease-sway) infinite; }
+#p5-leak[data-open='1'] { opacity: 1; visibility: visible; animation: leak-flicker 1.4s var(--ease-sway) infinite; }
 @keyframes leak-flicker { 0%,100% { opacity: .78; } 50% { opacity: 1; } }
 #p5-leak-note {
   position: fixed;
@@ -254,9 +255,10 @@ body[data-device='mobile'] #p5-toasts { top: calc(46px + var(--s-2)); left: var(
   border-radius: var(--r-2);
   box-shadow: 0 14px 34px -14px rgba(0,0,0,.95);
   opacity: 0; pointer-events: none;
-  transition: opacity var(--t-mid) linear, transform var(--t-slow) var(--ease-develop);
+  visibility: hidden;
+  transition: opacity var(--t-mid) linear, transform var(--t-slow) var(--ease-develop), visibility 0s var(--t-mid);
 }
-#p5-leak-note[data-open='1'] { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+#p5-leak-note[data-open='1'] { opacity: 1; pointer-events: auto; visibility: visible; transform: translateX(-50%) translateY(0); }
 #p5-leak-note .ic { color: #ffb9ad; flex: none; }
 #p5-leak-note .tx { font-family: var(--f-serif); font-size: var(--fs-xs); color: #ffe6e0; letter-spacing: .06em; flex: 1; }
 #p5-leak-note .tx b { color: #fff; }

@@ -39,6 +39,11 @@
       global.setTimeout(function () {
         ov.dataset.phase = 'gone';
         if (sh) sh.dataset.phase = 'idle';
+        /* 彻底退出：淡出完成后 hidden + 删节点（整屏灰罩防护，同 P4） */
+        global.setTimeout(function () {
+          ov.hidden = true;
+          if (sh && sh.parentNode) sh.parentNode.removeChild(sh);
+        }, 980);
       }, 1040);
     }
     ov.addEventListener('click', enter);

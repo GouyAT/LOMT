@@ -597,9 +597,10 @@ body[data-device='mobile'] #p5-app { grid-template-areas: 'beam' 'stage' 'bench'
   border-radius: var(--r-4) var(--r-4) 0 0;
   box-shadow: 0 -24px 60px -20px rgba(0,0,0,.95);
   transform: translateY(calc(100% + 60px));
-  transition: transform var(--t-slow) var(--ease-develop);
+  visibility: hidden;
+  transition: transform var(--t-slow) var(--ease-develop), visibility 0s var(--t-slow);
 }
-#p5-drawer[data-open='1'] { transform: translateY(0); }
+#p5-drawer[data-open='1'] { transform: translateY(0); visibility: visible; }
 .drawer__grip { display: grid; place-items: center; min-height: var(--tap-min); cursor: grab; }
 .drawer__grip::after { content: ''; width: 42px; height: 3px; border-radius: var(--r-pill); background: var(--line-strong); }
 .drawer__head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); padding: 0 var(--s-4) var(--s-2); border-bottom: 1px solid var(--line-soft); }

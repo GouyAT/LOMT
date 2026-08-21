@@ -159,15 +159,15 @@ ok(`通向面板的常驻通道 = ${BUDGET.entryChannels}`, entries.declared ===
 
 /* ---------- 5d. 关闭态浮层不得参与合成（整页发灰的元凶） ---------- */
 const idleOverlays = await page.evaluate(() => {
-  const ids = ['p5-contact', 'p5-timer-scrim', 'p5-drawer-scrim'];
+  const ids = ['p5-contact', 'p5-timer-scrim', 'p5-drawer-scrim', 'p5-open', 'p5-leak', 'p5-leak-note', 'p5-drawer'];
   return ids.map((id) => {
     const el = document.getElementById(id);
     if (!el) return { id, missing: true };
     const s = getComputedStyle(el);
-    return { id, open: el.dataset.open === '1', vis: s.visibility, bf: (s.backdropFilter || s.webkitBackdropFilter || 'none') };
+    return { id, open: el.dataset.open === '1', gone: s.display === 'none' || s.visibility === 'hidden', bf: (s.backdropFilter || s.webkitBackdropFilter || 'none') };
   });
 });
-const leaky = idleOverlays.filter((o) => !o.missing && !o.open && (o.vis !== 'hidden' || (o.bf && o.bf !== 'none')));
+const leaky = idleOverlays.filter((o) => !o.missing && !o.open && (!o.gone || (o.bf && o.bf !== 'none')));
 ok('关闭态浮层已彻底退出合成（visibility:hidden + backdrop-filter:none）',
   leaky.length === 0,
   leaky.length ? leaky.map((o) => `${o.id}:${o.vis}/${o.bf}`).join(' ') : idleOverlays.map((o) => o.id).join(','));
@@ -190,6 +190,14 @@ const synthHazards = await page.evaluate(() => {
 });
 ok('可见元素零 backdrop-filter / 零 mix-blend-mode（Chrome 133 发灰防护）',
   synthHazards.length === 0, synthHazards.slice(0, 6).join(' '));
+
+/* 过场节点必须彻底移除 */
+const removedNodes = await page.evaluate(() => ({
+  shutter: !!document.getElementById('p5-shutter'),
+  openHidden: !!document.getElementById('p5-open') && document.getElementById('p5-open').hidden
+}));
+ok('快门过场节点已从 DOM 移除、开场层已 hidden',
+  !removedNodes.shutter && removedNodes.openHidden, JSON.stringify(removedNodes));
 /* ---------- 5. 无横向溢出 / ID 唯一 ---------- */
 const dupIds = await page.evaluate(() => {
   const seen = new Set(), dup = [];
