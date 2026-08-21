@@ -213,3 +213,31 @@
 @media (prefers-reduced-motion: reduce) {
   :root { --t-fast: 1ms; --t-mid: 1ms; --t-slow: 1ms; --t-develop: 1ms; }
 }
+
+/* ============================================================
+   兼容加固 A：mix-blend-mode 不支持时隐藏颗粒层
+   ============================================================ */
+@supports not (mix-blend-mode: overlay) {
+  .grain { display: none !important; }
+}
+
+/* ============================================================
+   兼容加固 B：不支持 color-mix() 的旧浏览器
+   P5 的 --txt / --line 系列都由 color-mix 派生，必须给实色回退，
+   否则正文颜色会退化成 initial（黑底黑字，整页看不见东西）
+   ============================================================ */
+@supports not (color: color-mix(in srgb, red, blue)) {
+  :root {
+    --line: rgba(61, 68, 72, .62);
+    --line-soft: rgba(61, 68, 72, .34);
+    --line-strong: rgba(143, 152, 158, .46);
+    --txt: #c9d0d2;
+    --glow: rgba(210, 69, 46, .4);
+    --sh-near: 0 1px 2px rgba(0, 0, 0, .5), 0 0 0 1px rgba(61, 68, 72, .4);
+    --sh-lift: 0 6px 18px -6px rgba(0, 0, 0, .72), inset 0 1px 0 rgba(196, 204, 209, .08);
+    --sh-screen: 0 34px 90px -28px rgba(0, 0, 0, .92), 0 0 0 1px rgba(143, 152, 158, .22);
+    --sh-safelight: 0 0 26px -6px rgba(210, 69, 46, .4);
+  }
+  [data-skin='cyanotype'] { --txt: #dbe8ef; --line: rgba(53, 82, 95, .62); --line-soft: rgba(53, 82, 95, .34); --line-strong: rgba(147, 174, 189, .46); }
+  [data-skin='daguerre'] { --txt: #e4e8ea; --line: rgba(65, 74, 80, .62); --line-soft: rgba(65, 74, 80, .34); --line-strong: rgba(166, 174, 180, .46); }
+}

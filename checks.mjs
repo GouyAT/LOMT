@@ -157,6 +157,21 @@ const entries = await page.evaluate(() => {
 ok(`通向面板的常驻通道 = ${BUDGET.entryChannels}`, entries.declared === 1 && entries.strayFrames === 0,
   `样张钮 ${entries.declared} · 散落格 ${entries.strayFrames}`);
 
+/* ---------- 5d. 关闭态浮层不得参与合成（整页发灰的元凶） ---------- */
+const idleOverlays = await page.evaluate(() => {
+  const ids = ['p5-contact', 'p5-timer-scrim', 'p5-drawer-scrim'];
+  return ids.map((id) => {
+    const el = document.getElementById(id);
+    if (!el) return { id, missing: true };
+    const s = getComputedStyle(el);
+    return { id, open: el.dataset.open === '1', vis: s.visibility, bf: (s.backdropFilter || s.webkitBackdropFilter || 'none') };
+  });
+});
+const leaky = idleOverlays.filter((o) => !o.missing && !o.open && (o.vis !== 'hidden' || (o.bf && o.bf !== 'none')));
+ok('关闭态浮层已彻底退出合成（visibility:hidden + backdrop-filter:none）',
+  leaky.length === 0,
+  leaky.length ? leaky.map((o) => `${o.id}:${o.vis}/${o.bf}`).join(' ') : idleOverlays.map((o) => o.id).join(','));
+
 /* ---------- 5. 无横向溢出 / ID 唯一 ---------- */
 const dupIds = await page.evaluate(() => {
   const seen = new Set(), dup = [];

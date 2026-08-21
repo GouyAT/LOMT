@@ -177,12 +177,17 @@ body[data-device='mobile'] #p5-toasts { top: calc(46px + var(--s-2)); left: var(
   display: grid; place-items: center;
   padding: var(--s-4);
   background: rgba(9,6,7,.74);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  visibility: hidden;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   opacity: 0; pointer-events: none;
   transition: opacity var(--t-mid) linear;
 }
-#p5-timer-scrim[data-open='1'] { opacity: 1; pointer-events: auto; }
+#p5-timer-scrim[data-open='1'] {
+  opacity: 1; pointer-events: auto; visibility: visible;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
 .timer-box {
   position: relative;
   width: min(432px, 100%);
