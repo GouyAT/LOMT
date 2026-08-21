@@ -334,8 +334,6 @@
   background: color-mix(in srgb, var(--ink-void) 72%, transparent);
   border: var(--bd-hair);
   border-radius: var(--r-pill);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
 }
 .scene-tag .zh { font-family: var(--font-serif); font-size: var(--fs-tiny); letter-spacing: .14em; color: var(--silver-hi); }
 .scene-tag .n { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--silver-lo); }
@@ -348,8 +346,6 @@
   background: color-mix(in srgb, var(--ink-void) 74%, transparent);
   border: var(--bd-hair);
   border-radius: var(--r-md);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
 }
 .tri-switch > button {
   display: flex;
@@ -929,8 +925,6 @@ body[data-device='mobile'] #p4-tabbar {
   opacity: 1;
   pointer-events: auto;
   visibility: visible;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
 }
 #p4-sheet-scrim[data-open='1'] { opacity: 1; pointer-events: auto; visibility: visible; }
 

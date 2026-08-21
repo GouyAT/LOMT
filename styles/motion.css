@@ -15,7 +15,7 @@
 @keyframes enter-left { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
 @keyframes enter-right { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
 @keyframes enter-rail { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: none; } }
-@keyframes enter-pool { from { opacity: 0; transform: translateY(26px) scale(.985); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes enter-pool { from { opacity: 0; transform: translateY(26px) scale(.985); } to { opacity: 1; transform: none; } }
 
 /* 侧栏内元素逐条落位 */
 #p4-app.is-live .tower__body > *,

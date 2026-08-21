@@ -171,8 +171,6 @@ body[data-device='mobile'] .win__body { padding: var(--s-3); }
   opacity: 1;
   pointer-events: auto;
   visibility: visible;
-  backdrop-filter: blur(10px) saturate(70%) brightness(.5);
-  -webkit-backdrop-filter: blur(10px) saturate(70%) brightness(.5);
 }
 body.fog-open #p4-app { transform: scale(.965); filter: blur(2px) brightness(.55); }
 #p4-app { transition: opacity var(--t-slow) linear, transform var(--t-slow) var(--ease-instrument), filter var(--t-slow) linear; }
@@ -408,8 +406,6 @@ body[data-device='mobile'] #p4-toasts { top: 54px; left: var(--s-2); right: var(
   opacity: 1;
   pointer-events: auto;
   visibility: visible;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
 }
 .seal-box {
   position: relative;

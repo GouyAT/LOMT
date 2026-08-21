@@ -174,3 +174,19 @@ Toast 堆叠 · 确认框 role=dialog + aria-modal + Esc 返回 false · 警示�
 | `Esc` | 逐层关闭：星图 → 抽屉 → 最上层窗口 → 确认框 |
 | `1` `2` `3` | 窄条叙事 / 全屏阅读 / 探索热区 |
 | `[` `]` | 收起 / 展开左仪表塔、右卷宗栏 |
+
+
+---
+
+## 兼容性加固（2026-08-21 · Chrome 133 发灰事件）
+
+用户报告：Chrome 133.0.6943 打开本原型，开场动画正常，一进入登录页/游戏即全屏灰遮罩；Edge 正常。
+根因是 Chrome 133 渲染层对三类合成特性的 bug，而非页面逻辑：
+
+1. 场景雾层 ilter: blur(14px) + 持续 transform 动画 → 大模糊 + 动画栅格化失败，渲成整片灰糊并越界
+2. 常驻元素上的 ackdrop-filter（汞镜池/场景牌/三态条）→ 模糊采样区溢出到整个合成层
+3. 全屏噪点 mix-blend-mode: overlay + SVG feTurbulence → 合成失败退化成中灰平片
+
+修复：全部改为零合成风险的等效实现——雾层改更宽径向渐变 + 仅透明度呼吸、ackdrop-filter 全站清零（压暗改用更高不透明度底色）、噪点改普通混合 4.5% 透明度、入场动画不再动画 filter。并新增两条回归断言（关闭态浮层彻底退出合成、可见元素零 backdrop-filter / 零 mix-blend-mode）。
+
+**要求：本原型此后不得重新引入 backdrop-filter 与 mix-blend-mode；雾层不得再用 filter:blur + transform 动画。**

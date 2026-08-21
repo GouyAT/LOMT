@@ -35,14 +35,15 @@
 }
 @keyframes slab-twinkle { from { opacity: .28; } to { opacity: .62; } }
 
-/* 颗粒纹理（叠加在最上，极轻） */
+/* 颗粒纹理（叠加在最上，极轻）。
+   兼容加固：不用 mix-blend-mode:overlay（Chrome 133 对 SVG 噪点 + 混合的合成 bug 会渲成整片灰），
+   改用普通混合 + 更低透明度，观感几乎一致。 */
 .grain-overlay {
   position: fixed;
   inset: 0;
   z-index: var(--z-grain);
   pointer-events: none;
-  opacity: .13;
-  mix-blend-mode: overlay;
+  opacity: .045;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
 }
 
@@ -257,8 +258,9 @@
   border-radius: var(--r-lg);
   box-shadow: 0 -1px 0 color-mix(in srgb, var(--silver-hi) 14%, transparent) inset,
               0 20px 50px -26px rgb(0 0 0 / .95);
-  backdrop-filter: blur(9px) saturate(112%);
-  -webkit-backdrop-filter: blur(9px) saturate(112%);
+  /* 兼容加固：汞镜池不用 backdrop-filter。
+     Chrome 133 会把「常驻可见元素上的 backdrop-filter」的模糊采样区溢出到整个合成层，
+     表现为整页灰糊（Edge 正常）。池底已 84% 不透明，去掉模糊几乎无损。 */
   overflow: hidden;
 }
 /* 镜面斜掠高光（缓慢流动） */
@@ -611,21 +613,20 @@
 /* 雾层流动 */
 .scene-layer__fog {
   position: absolute;
-  inset: -20%;
-  opacity: .34;
+  inset: -10%;
+  opacity: .36;
   pointer-events: none;
+  /* 兼容加固：不用 filter:blur 也不用 transform 动画。
+     Chrome 133 对「大模糊滤镜 + 持续动画」的栅格化有 bug，会渲染成整片灰糊（Edge 正常）。
+     雾的柔和感改由更大、更宽的径向渐变直接画出。 */
   background:
-    radial-gradient(ellipse 46% 30% at 22% 68%, color-mix(in srgb, var(--silver) 26%, transparent), transparent 62%),
-    radial-gradient(ellipse 38% 26% at 74% 40%, color-mix(in srgb, var(--prussian-hi) 22%, transparent), transparent 60%),
-    radial-gradient(ellipse 54% 22% at 50% 88%, color-mix(in srgb, var(--silver) 18%, transparent), transparent 66%);
-  animation: fog-drift 34s var(--ease-mercury) infinite alternate;
-  filter: blur(14px);
+    radial-gradient(ellipse 62% 44% at 20% 66%, color-mix(in srgb, var(--silver) 13%, transparent) 0%, transparent 72%),
+    radial-gradient(ellipse 56% 40% at 76% 38%, color-mix(in srgb, var(--prussian-hi) 11%, transparent) 0%, transparent 72%),
+    radial-gradient(ellipse 66% 34% at 50% 90%, color-mix(in srgb, var(--silver) 9%, transparent) 0%, transparent 72%);
+  animation: fog-breathe 26s var(--ease-mercury) infinite alternate; /* 仅透明度呼吸，零合成风险 */
 }
-@keyframes fog-drift {
-  from { transform: translate3d(-3%, 1%, 0) scale(1.02); }
-  to { transform: translate3d(3%, -2%, 0) scale(1.12); }
-}
-/* 煤气灯光斑（唯一暖色来源） */
+@keyframes fog-breathe { from { opacity: .3; } to { opacity: .44; } }
+/* 煤气灯光斑（唯一暖色来源）—— 不用 mix-blend-mode:screen（Chrome 133 合成 bug 源） */
 .scene-layer__lamp {
   position: absolute;
   width: 42%;
@@ -635,17 +636,16 @@
   border-radius: 50%;
   pointer-events: none;
   background: radial-gradient(circle,
-      color-mix(in srgb, var(--gaslight) 22%, transparent) 0%,
-      color-mix(in srgb, var(--gaslight) 6%, transparent) 42%,
-      transparent 70%);
+      color-mix(in srgb, var(--gaslight) 24%, transparent) 0%,
+      color-mix(in srgb, var(--gaslight) 8%, transparent) 44%,
+      transparent 72%);
   animation: lamp-flicker 6.5s ease-in-out infinite;
-  mix-blend-mode: screen;
 }
 @keyframes lamp-flicker {
-  0%, 100% { opacity: .72; transform: scale(1); }
-  38% { opacity: .95; transform: scale(1.04); }
-  52% { opacity: .6; transform: scale(.98); }
-  71% { opacity: .88; transform: scale(1.02); }
+  0%, 100% { opacity: .62; }
+  38% { opacity: .86; }
+  52% { opacity: .5; }
+  71% { opacity: .76; }
 }
 
 /* 探索热区银点 */

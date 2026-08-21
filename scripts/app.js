@@ -470,7 +470,7 @@
       var lacks = [];
       try {
         if (!(global.CSS && CSS.supports && CSS.supports('color', 'color-mix(in srgb, red, blue)'))) lacks.push('color-mix()');
-        if (!(global.CSS && CSS.supports && (CSS.supports('backdrop-filter', 'blur(2px)') || CSS.supports('-webkit-backdrop-filter', 'blur(2px)')))) lacks.push('backdrop-filter');
+        
         if (!(global.CSS && CSS.supports && CSS.supports('mix-blend-mode', 'overlay'))) lacks.push('mix-blend-mode');
       } catch (e) { /* 老浏览器连 CSS.supports 都没有 */ lacks.push('CSS.supports'); }
       if (lacks.length) {

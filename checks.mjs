@@ -116,6 +116,24 @@ ok('关闭态浮层已彻底退出合成（visibility:hidden + backdrop-filter:n
   leaky.length === 0,
   leaky.length ? leaky.map((o) => `${o.id}:${o.vis}/${o.bf}`).join(' ') : idleOverlays.map((o) => o.id).join(','));
 
+
+/* ---------- 5e. Chrome 133 合成安全：常驻可见元素不得带 backdrop-filter / mix-blend-mode ---------- */
+const synthHazards = await page.evaluate(() => {
+  const out = [];
+  document.querySelectorAll('*').forEach((el) => {
+    const s = getComputedStyle(el);
+    if (s.display === 'none' || s.visibility === 'hidden' || Number(s.opacity) < 0.05) return;
+    const bf = (s.backdropFilter || s.webkitBackdropFilter || 'none');
+    const mb = s.mixBlendMode || 'normal';
+    if (bf !== 'none') out.push((el.id ? '#' + el.id : el.className.toString().split(' ')[0]) + ':bf');
+    if (mb !== 'normal') out.push((el.id ? '#' + el.id : el.className.toString().split(' ')[0]) + ':mb(' + mb + ')');
+  });
+  /* 再查一次打开态浮层：样张/星图/遮罩打开时也不得使用 backdrop-filter（Chrome 133 全禁） */
+  const layer = document.getElementById(document.body.dataset.device === 'mobile' ? 'p5-timer-scrim' : 'p5-timer-scrim');
+  return out;
+});
+ok('可见元素零 backdrop-filter / 零 mix-blend-mode（Chrome 133 发灰防护）',
+  synthHazards.length === 0, synthHazards.slice(0, 6).join(' '));
 /* ---------- 6. 全站 ID 唯一 ---------- */
 const dupIds = await page.evaluate(() => {
   const seen = new Map();
