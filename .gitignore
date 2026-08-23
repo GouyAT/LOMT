@@ -1,0 +1,9 @@
+# p3-demo 仓库约定：只推源码；预构建产物 / 测试产物 / 截图不入库（LOMT 仓库既有约定）
+node_modules/
+screenshots/
+engine/bundle.js
+_smoke.html
+make-smoke.mjs
+patch-*.mjs
+revert-*.mjs
+*.log

@@ -1,0 +1,285 @@
+/* ============================================================
+   诡秘剧场 · 原型3 — 动效层
+   一切动画只碰 transform / opacity / filter
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   核心：显影揭示（本代替代打字机）
+   段落从「雾里、低反差、下沉」收敛到锐利
+   ------------------------------------------------------------ */
+@keyframes develop-in {
+  0%   { opacity: 0; transform: translateY(8px) scale(1.008); }
+  100% { opacity: 1; transform: none; }
+}
+
+.develop { animation: none; opacity: 1; }
+.develop-1 { animation: none; }
+.develop-2 { animation: none; }
+.develop-3 { animation: none; }
+.develop-4 { animation: none; }
+.develop-5 { animation: none; }
+.develop-6 { animation: none; }
+.develop-7 { animation: none; }
+.develop-8 { animation: none; }
+
+/* 定影闪光（快门/放大机灯） */
+@keyframes fix-flash {
+  0%   { opacity: 0; }
+  12%  { opacity: .92; }
+  100% { opacity: 0; }
+}
+#p3-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 130;
+  pointer-events: none;
+  background: radial-gradient(60% 50% at 50% 46%, #fff, color-mix(in srgb, var(--paper) 70%, transparent) 46%, transparent 76%);
+  opacity: 0;
+}
+#p3-flash.is-fire { animation: fix-flash 620ms var(--ease-develop); }
+
+/* ------------------------------------------------------------
+   安全灯 / 灯泡 / 漏光
+   ------------------------------------------------------------ */
+@keyframes safelight-breathe {
+  0%, 100% { box-shadow: 0 0 20px -3px var(--glow), inset 0 0 8px rgba(0, 0, 0, .5); }
+  50%      { box-shadow: 0 0 30px 1px var(--glow), inset 0 0 8px rgba(0, 0, 0, .5); }
+}
+
+@keyframes bulb-pulse {
+  0%, 100% { opacity: .48; }
+  50%      { opacity: 1; }
+}
+
+@keyframes light-leak {
+  0%   { opacity: 0; transform: translate3d(0, 0, 0); }
+  14%  { opacity: .92; transform: translate3d(-3px, 1px, 0); }
+  30%  { opacity: .5;  transform: translate3d(3px, -1px, 0); }
+  48%  { opacity: .85; transform: translate3d(-2px, 0, 0); }
+  70%  { opacity: .32; transform: translate3d(1px, 1px, 0); }
+  100% { opacity: 0; transform: none; }
+}
+
+/* ------------------------------------------------------------
+   显影盘涟漪
+   ------------------------------------------------------------ */
+@keyframes ripple {
+  0%   { transform: scale(.28); opacity: .9; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+@keyframes here-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--safelight) 55%, transparent); }
+  60%      { box-shadow: 0 0 0 12px color-mix(in srgb, var(--safelight) 0%, transparent); }
+}
+
+/* ------------------------------------------------------------
+   晾片绳
+   ------------------------------------------------------------ */
+@keyframes print-drop {
+  0%   { transform: rotate(-1deg); opacity: 1; }
+  30%  { transform: rotate(6deg) translateY(6px); }
+  100% { transform: rotate(16deg) translateY(120px); opacity: 0; }
+}
+
+@keyframes toast-clip-in {
+  0%   { opacity: 0; transform: translateX(28px) rotate(4deg); }
+  62%  { opacity: 1; transform: translateX(0) rotate(-1.6deg); }
+  100% { opacity: 1; transform: rotate(-.5deg); }
+}
+
+@keyframes toast-clip-out {
+  0%   { opacity: 1; transform: rotate(-.5deg); }
+  100% { opacity: 0; transform: rotate(9deg) translateY(48px); }
+}
+
+@keyframes toast-bar {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+
+/* ------------------------------------------------------------
+   幻灯光锥
+   ------------------------------------------------------------ */
+@keyframes beam-open {
+  0%   { opacity: 0; transform: translateY(-50%) scaleX(0); }
+  35%  { opacity: .95; }
+  100% { opacity: .3; transform: translateY(-50%) scaleX(1); }
+}
+
+/* ------------------------------------------------------------
+   开场序列
+   ------------------------------------------------------------ */
+@keyframes title-emerge {
+  0%   { opacity: 0; filter: blur(16px) contrast(.35) brightness(1.6); letter-spacing: .58em; transform: scale(1.05); }
+  55%  { opacity: .8; filter: blur(4px) contrast(.7) brightness(1.2); letter-spacing: .34em; }
+  100% { opacity: 1; filter: blur(0) contrast(1) brightness(1); letter-spacing: .26em; transform: none; }
+}
+
+@keyframes sub-emerge {
+  0%   { opacity: 0; filter: blur(8px); transform: translateY(6px); }
+  100% { opacity: .72; filter: blur(0); transform: none; }
+}
+
+@keyframes hint-blink {
+  0%, 100% { opacity: .28; }
+  50%      { opacity: .9; }
+}
+
+/* 相纸从盘中被夹起、上绳 */
+@keyframes lift-to-line {
+  0%   { transform: none; opacity: 1; }
+  40%  { transform: translateY(-6vh) rotate(-1.4deg) scale(1.01); }
+  100% { transform: translateY(-118vh) rotate(3deg) scale(.9); opacity: 0; }
+}
+
+@keyframes tray-drain {
+  0%   { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.08); }
+}
+
+/* 登录页背景微动态：Ken Burns + 焦点呼吸 */
+@keyframes ken-burns {
+  0%   { transform: scale(1.04) translate3d(0, 0, 0); }
+  50%  { transform: scale(1.13) translate3d(-1.6%, -1.2%, 0); }
+  100% { transform: scale(1.04) translate3d(0, 0, 0); }
+}
+
+@keyframes focus-breathe {
+  0%, 100% { filter: blur(2.4px) saturate(.86) brightness(.72); }
+  50%      { filter: blur(4.6px) saturate(.78) brightness(.66); }
+}
+
+@keyframes fog-drift {
+  0%   { transform: translate3d(-6%, 0, 0) scale(1.18); opacity: .3; }
+  50%  { transform: translate3d(4%, -2%, 0) scale(1.28); opacity: .46; }
+  100% { transform: translate3d(-6%, 0, 0) scale(1.18); opacity: .3; }
+}
+
+/* ------------------------------------------------------------
+   入场编排（主界面各区错峰浮现）
+   ------------------------------------------------------------ */
+@keyframes enter-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes enter-left {
+  from { opacity: 0; transform: translateX(-18px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes enter-right {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes enter-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.is-entering .app-beam   { animation: enter-down 520ms var(--ease-develop) both; }
+.is-entering .app-trough { animation: enter-left 620ms 90ms var(--ease-develop) both; }
+.is-entering .app-stage  { animation: enter-up 660ms 150ms var(--ease-develop) both; }
+.is-entering .app-wall   { animation: enter-right 620ms 230ms var(--ease-develop) both; }
+.is-entering .app-strip  { animation: enter-up 620ms 320ms var(--ease-develop) both; }
+
+/* 底片条格子逐个点亮 */
+.is-entering .frame { animation: frame-load 460ms var(--ease-develop) both; }
+@keyframes frame-load {
+  from { opacity: 0; transform: translateY(10px) scale(.96); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ------------------------------------------------------------
+   页面切换（开场 / 登录 / 主界面）
+   ------------------------------------------------------------ */
+.scene {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--t-slow) var(--ease-out), visibility var(--t-slow) step-end;
+}
+.scene.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--t-slow) var(--ease-out), visibility 0s;
+}
+
+/* ------------------------------------------------------------
+   抽屉 / 底部纸袋（移动端）
+   ------------------------------------------------------------ */
+@keyframes sheet-up {
+  from { transform: translateY(102%); }
+  to   { transform: none; }
+}
+@keyframes sheet-down {
+  from { transform: none; }
+  to   { transform: translateY(102%); }
+}
+
+/* ------------------------------------------------------------
+   数值跳动（属性变化提示）
+   ------------------------------------------------------------ */
+@keyframes val-bump {
+  0%   { transform: none; }
+  35%  { transform: translateY(-4px) scale(1.14); color: var(--fixer-2); }
+  100% { transform: none; }
+}
+.is-bump { animation: val-bump 620ms var(--ease-out); }
+
+@keyframes val-drop {
+  0%   { transform: none; }
+  35%  { transform: translateY(4px) scale(1.1); color: var(--safelight-2); }
+  100% { transform: none; }
+}
+.is-drop-val { animation: val-drop 620ms var(--ease-out); }
+
+/* ------------------------------------------------------------
+   塔罗显影翻牌
+   ------------------------------------------------------------ */
+@keyframes card-develop {
+  0%   { opacity: 0; filter: blur(10px) brightness(1.5) contrast(.4); transform: rotateY(-12deg) scale(.94); }
+  100% { opacity: 1; filter: none; transform: none; }
+}
+
+/* ------------------------------------------------------------
+   放大镜热区
+   ------------------------------------------------------------ */
+@keyframes loupe-bloom {
+  0%, 100% { transform: scale(.86); opacity: .34; }
+  50%      { transform: scale(1.14); opacity: .9; }
+}
+
+/* ------------------------------------------------------------
+   条形加载（流式指示）
+   ------------------------------------------------------------ */
+@keyframes stream-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(320%); }
+}
+.streaming-bar {
+  position: relative;
+  height: 2px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--silver-4) 60%, transparent);
+  border-radius: var(--r-pill);
+}
+.streaming-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 32%;
+  background: linear-gradient(90deg, transparent, var(--safelight-2), transparent);
+  animation: stream-sweep 1.3s linear infinite;
+}
+
+/* 光标（正在显影） */
+.dev-caret {
+  display: inline-block;
+  width: 8px;
+  height: 1.02em;
+  margin-left: 3px;
+  vertical-align: -.16em;
+  background: color-mix(in srgb, var(--safelight) 78%, var(--ink));
+  animation: hint-blink 1.05s steps(2, start) infinite;
+}

@@ -1,0 +1,11 @@
+{
+  "name": "guimi-darkroom",
+  "private": true,
+  "version": "0.1.0",
+  "description": "诡秘剧场 · 灵异显影室（p3-demo UI 底座 + 数值引擎嵌入）",
+  "type": "module",
+  "scripts": {
+    "build:engine": "node build-engine.mjs",
+    "check:js": "node --check scripts/app.js && node --check scripts/data.js && node --check scripts/panels-play.js && node --check scripts/panels-story.js && node --check scripts/panels-system.js && node --check scripts/dom.js && node --check scripts/fx.js && node --check scripts/lore.js && node --check scripts/icons.js"
+  }
+}

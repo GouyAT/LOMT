@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-skin="darkroom" data-density="normal" data-motion="on">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="诡秘剧场 · 前端原型3「灵异显影室」——《诡秘之主》AIRP 重制版纯前端界面原型">
+<title>诡秘剧场 · 灵异显影室</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700;900&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400&family=Courier+Prime:wght@400;700&display=swap">
+
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/darkroom.css">
+<link rel="stylesheet" href="styles/panels.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/motion.css">
+</head>
+<body data-view="desktop">
+
+<a class="sr-only" href="#p3-narr-body">跳到叙事正文</a>
+
+<!-- ============================================================
+     幕一 · 开场：显影盘
+     ============================================================ -->
+<section class="scene is-active" id="p3-opening" role="button" tabindex="0" aria-label="点击以定影，进入诡秘剧场">
+  <div class="tray" id="p3-tray">
+    <div id="p3-tray-ripple" aria-hidden="true"></div>
+    <div class="tray-sheet" id="p3-tray-sheet">
+      <h1 class="open-title" id="p3-open-title">诡秘剧场</h1>
+      <p class="open-latin">Lord of Mysteries · Theatre</p>
+      <div class="open-rule" aria-hidden="true"></div>
+      <p class="open-meta">原型三 · 灵异显影室 · PROTOTYPE III</p>
+      <p class="open-hint" id="p3-open-hint">
+        <svg class="ico ico--sm" aria-hidden="true" focusable="false"><use href="#i-dropper"/></svg>
+        <span>点击以定影</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     幕二 · 登录页
+     ============================================================ -->
+<section class="scene" id="p3-login" aria-label="诡秘剧场登录">
+  <div class="login-bg" id="p3-login-bg" aria-hidden="true"></div>
+  <div class="login-veil" aria-hidden="true"></div>
+  <div class="login-fog" aria-hidden="true"></div>
+  <canvas id="p3-login-dust" aria-hidden="true"></canvas>
+
+  <div class="login-card">
+    <header class="login-brand">
+      <div class="lb-ttl">诡秘剧场</div>
+      <div class="lb-latin">Lord of Mysteries · Theatre</div>
+      <div class="lb-mark" aria-hidden="true">
+        <i class="ln"></i>
+        <svg class="ico ico--sm" focusable="false"><use href="#i-eyeMystic"/></svg>
+        <i class="ln"></i>
+      </div>
+    </header>
+
+    <nav class="login-actions" id="p3-login-actions" aria-label="主菜单"></nav>
+
+    <div class="login-utils" id="p3-login-utils"></div>
+
+    <aside class="login-notice" aria-label="显影室公告">
+      <div class="ln-head">
+        <svg class="ico ico--sm" aria-hidden="true" focusable="false"><use href="#i-rss"/></svg>
+        <span>显影室公告 · 原型三</span>
+      </div>
+      <ul id="p3-login-notice-list"></ul>
+    </aside>
+  </div>
+</section>
+
+<!-- ============================================================
+     幕三 · 主界面
+     ============================================================ -->
+<section class="scene" id="p3-app" aria-label="诡秘剧场主界面">
+  <div class="app-grid" id="p3-grid" data-trough="full" data-wall="full">
+
+    <!-- 暗房横梁 -->
+    <header class="app-beam" id="p3-beam">
+      <div class="beam-brand">
+        <button class="safelamp" id="p3-safelamp" type="button" title="安全灯 · 点击测试漏光警示" aria-label="安全灯"></button>
+        <div>
+          <div class="bb-ttl">诡秘剧场</div>
+          <span class="eyebrow">Darkroom</span>
+        </div>
+      </div>
+
+      <button class="beam-skin" id="p3-skin-btn" type="button" title="切换主题皮肤">
+        <svg class="ico ico--sm" aria-hidden="true" focusable="false"><use href="#i-skin"/></svg>
+        <span id="p3-skin-name">显影室</span>
+      </button>
+
+      <div class="beam-lamps" id="p3-lamps" role="group" aria-label="管线状态灯"></div>
+
+      <div class="beam-exposure" id="p3-exposure"></div>
+
+      <div class="beam-tools" id="p3-beam-tools"></div>
+    </header>
+
+    <!-- 左：显影槽 -->
+    <aside class="app-trough" id="p3-trough" aria-label="显影槽 · 角色状态">
+      <div class="trough-full">
+        <div class="plate-head" style="border-bottom:1px solid var(--line-soft)">
+          <svg class="ico ico--sm" aria-hidden="true" focusable="false" style="color:var(--safelight-2)"><use href="#i-tray"/></svg>
+          <div class="grow">
+            <div class="ttl">显影槽</div>
+            <span class="eyebrow">Developing Bench</span>
+          </div>
+          <button class="btn btn--icon btn--sm" id="p3-trough-collapse" type="button" title="收进灯箱轨道" aria-label="收起显影槽">
+            <svg class="ico ico--sm" aria-hidden="true" focusable="false"><use href="#i-chevronL"/></svg>
+          </button>
+        </div>
+        <div class="trough-scroll" id="p3-trough-body"></div>
+      </div>
+      <div class="rail" id="p3-trough-rail"></div>
+    </aside>
+
+    <!-- 中：显影台 -->
+    <main class="app-stage" id="p3-stage" data-mode="strip">
+      <div class="stage-tools" id="p3-stage-tools"></div>
+
+      <div class="stage-view" id="p3-stage-view">
+        <div class="scene-fallback" aria-hidden="true"></div>
+        <div class="scene-photo" id="p3-scene-photo" aria-hidden="true"></div>
+        <div class="scene-shade" aria-hidden="true"></div>
+
+        <div class="loupes" id="p3-loupes" aria-label="场景热区"></div>
+
+        <article class="narrative paper" id="p3-narrative">
+          <header class="narr-head" id="p3-narr-head"></header>
+          <div class="narr-body" id="p3-narr-body" tabindex="-1"></div>
+          <footer class="narr-foot" id="p3-narr-foot"></footer>
+        </article>
+
+        <div class="letters" id="p3-letters" aria-label="信札 · 聊天列表"></div>
+      </div>
+
+      <form class="stage-compose" id="p3-compose" autocomplete="off">
+        <div class="quickcmds" id="p3-quickcmds" role="group" aria-label="快捷指令"></div>
+        <div class="compose-row">
+          <div class="logbook">
+            <label class="sr-only" for="p3-input">写下你的行动</label>
+            <textarea id="p3-input" rows="2" placeholder="写下你的行动、台词或询问……"></textarea>
+            <span class="lb-count u-mono" id="p3-input-count">0</span>
+          </div>
+          <button class="shutter" id="p3-send" type="submit" title="发送（Enter）">
+            <i class="bulbimg" aria-hidden="true"></i>
+            <span class="s-txt">发送</span>
+          </button>
+          <button class="shutter shutter--abort" id="p3-abort" type="button" title="终止本回合的生成" hidden>
+            <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-close"/></svg>
+            <span class="s-txt">终止</span>
+          </button>
+        </div>
+        <div class="compose-hint u-mono" id="p3-compose-hint"></div>
+      </form>
+    </main>
+
+    <!-- 右：相片墙 -->
+    <aside class="app-wall" id="p3-wall" aria-label="相片墙 · 现场速览">
+      <div class="wall-full">
+        <div class="plate-head" style="border-bottom:1px solid var(--line-soft)">
+          <button class="btn btn--icon btn--sm" id="p3-wall-collapse" type="button" title="收进灯箱轨道" aria-label="收起相片墙">
+            <svg class="ico ico--sm" aria-hidden="true" focusable="false"><use href="#i-chevronR"/></svg>
+          </button>
+          <div class="grow">
+            <div class="ttl">相片墙</div>
+            <span class="eyebrow">Pin Board</span>
+          </div>
+          <svg class="ico ico--sm" aria-hidden="true" focusable="false" style="color:var(--cyan-2)"><use href="#i-pinIcon"/></svg>
+        </div>
+        <div class="wall-scroll" id="p3-wall-body"></div>
+      </div>
+      <div class="rail" id="p3-wall-rail"></div>
+    </aside>
+
+    <!-- 底：底片条 -->
+    <nav class="app-strip filmstrip" id="p3-strip" aria-label="底片条 · 面板导航">
+      <button class="strip-nav strip-nav--l" id="p3-strip-l" type="button" aria-label="向左滚动">
+        <svg class="ico ico--sm" aria-hidden="true" focusable="false"><use href="#i-chevronL"/></svg>
+      </button>
+      <div class="frames" id="p3-frames"></div>
+      <button class="strip-nav strip-nav--r" id="p3-strip-r" type="button" aria-label="向右滚动">
+        <svg class="ico ico--sm" aria-hidden="true" focusable="false"><use href="#i-chevronR"/></svg>
+      </button>
+    </nav>
+
+    <!-- 移动端标签栏 -->
+    <nav id="p3-tabbar" aria-label="移动端导航"></nav>
+  </div>
+
+  <button id="p3-fab" type="button" title="AI 上下文配置" aria-label="AI 上下文配置">
+    <svg class="ico" aria-hidden="true" focusable="false"><use href="#i-context"/></svg>
+  </button>
+</section>
+
+<!-- ============================================================
+     全局层：幻灯投影 / 纸袋 / 通知 / 计时器 / 光效
+     ============================================================ -->
+<div id="p3-projection" aria-hidden="true" role="dialog" aria-modal="true" aria-label="幻灯投影面板">
+  <div class="proj-wall" aria-hidden="true"></div>
+  <div class="proj-beam" aria-hidden="true"></div>
+  <canvas id="p3-beam-dust" aria-hidden="true" style="position:absolute;inset:0;pointer-events:none"></canvas>
+  <section class="proj-screen">
+    <header class="proj-head"></header>
+    <div class="proj-body"></div>
+  </section>
+</div>
+
+<div id="p3-scrim" aria-hidden="true"></div>
+<aside id="p3-sheet" aria-label="底部纸袋"></aside>
+
+<div id="p3-toasts" aria-live="polite" aria-atomic="false"></div>
+<div id="p3-timerbox" aria-hidden="true"></div>
+<div id="p3-lightleak" aria-hidden="true"></div>
+<div id="p3-flash" aria-hidden="true"></div>
+
+<script src="engine/bundle.js"></script>
+<script src="scripts/icons.js"></script>
+<script src="scripts/dom.js"></script>
+<script src="scripts/fx.js"></script>
+<script src="scripts/lore.js"></script>
+<script src="scripts/data.js"></script>
+<script src="scripts/panels-story.js"></script>
+<script src="scripts/panels-play.js"></script>
+<script src="scripts/panels-system.js"></script>
+<script src="scripts/systems-engine.js"></script>
+<script src="scripts/app.js"></script>
+</body>
+</html>
