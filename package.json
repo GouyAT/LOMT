@@ -1,7 +1,7 @@
 {
   "name": "guimi-darkroom",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "诡秘剧场 · 灵异显影室（p3-demo UI 底座 + 数值引擎嵌入）",
   "type": "module",
   "scripts": {

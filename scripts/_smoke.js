@@ -112,6 +112,15 @@
     check('编辑器含 匹配角色描述', has('匹配角色描述'));
     check('编辑器含 绑定角色（JSON）', has('绑定角色（JSON）'));
     check('编辑器含 生成触发器', has('生成触发器'));
+    /* —— 蓝绿灯（酒馆灯色语义：蓝=constant 恒注入 / 绿=关键词触发） —— */
+    check('编辑器含 蓝灯/绿灯 段控', has('蓝灯 · 常驻') && has('绿灯 · 关键词'));
+    check('行内灯色圆点存在(默认绿灯)', !!document.querySelector('button[title^="绿灯 · 关键词触发"]'));
+    var blueBtn = byText('蓝灯 · 常驻');
+    if (blueBtn) { blueBtn.click(); await wait(350); }
+    check('编辑器切蓝灯即存(constant=true)', (seedBook() || { entries: [] }).entries[0].constant === true);
+    var lampBack = document.querySelector('button[title^="蓝灯 · 常驻恒注入"]');
+    if (lampBack) { lampBack.click(); await wait(350); }
+    check('行内圆点切回绿灯(constant=false)', (seedBook() || { entries: [] }).entries[0].constant === false);
     var okSticky = setNumByValue(3, 7);
     await wait(250);
     if ((seedBook() || { entries: [] }).entries[0].sticky !== 7) {
@@ -143,21 +152,60 @@
     check('条目搜索过滤(仅 1 行)', document.querySelectorAll('[data-role="row-enable"]').length === 1);
     if (sx) { sx.value = ''; sx.dispatchEvent(new Event('input', { bubbles: true })); await wait(250); }
 
-    /* —— 预设（酒馆式双栏：左块列表 + 右编辑器旁边打开 + 拖拽排序） —— */
+    /* —— 预设（v4：主序列[✓/✕ 开关·拖拽写回 prompt_order] + 库中未插入分组） —— */
+    E.addPreset({
+      id: 'pr2', name: '顺序预设', createdAt: new Date().toISOString(),
+      prompts: [
+        { name: '块甲', content: '<a>', identifier: 'a1', role: 'system', injection_position: 0 },
+        { name: '块乙', content: '<b>', identifier: 'b1', role: 'system', injection_position: 0 },
+        { name: '块丙', content: '<c>', identifier: 'c1', role: 'system', injection_position: 0 },
+        { name: '库中块丁', content: '<d>', identifier: 'd1', role: 'system', injection_position: 0 },
+      ],
+      sampling: {},
+      prompt_order: [{ character_id: 100001, order: [
+        { identifier: 'a1', enabled: true }, { identifier: 'b1', enabled: false },
+        { identifier: 'c1', enabled: true }, { identifier: 'ghost', enabled: true },
+      ] }],
+    });
     window.APP.openPanel('preset');
     await wait(450);
     check('预设选择(测试预设)', has('测试预设'));
     clickText('测试预设');
     await wait(400);
-    check('块卡片列表(拖动手柄)', has('提示块（按住行拖动排序）'));
-    var blkCount = document.querySelectorAll('[data-blk]').length;
-    check('块卡片 3 个', blkCount === 3);
+    check('块卡片列表(v4 标题)', has('提示块（拖动排序 · ✓开 ✕关）'));
+    var blkCount = document.querySelectorAll('[data-pos]').length;
+    check('块卡片 3 个(无序预设全视作主序列)', blkCount === 3);
+    /* —— v4 开关与未插入分组（顺序预设） —— */
+    clickText('顺序预设');
+    await wait(400);
+    var posRows = document.querySelectorAll('[data-pos]').length;
+    check('主序列 4 行(含停用/缺失占位)', posRows === 4);
+    check('缺失块占位行', has('缺失块'));
+    check('未插入分组头(库中块丁)', has('未插入 · 仅在库中'));
+    // 停用行 ✕ → 点击启用 → prompt_order 条目同步
+    var xBtns = [];
+    document.querySelectorAll('[data-pos] button').forEach(function (b) { if (b.textContent === '✕') xBtns.push(b); });
+    check('停用行显示 ✕', xBtns.length === 1);
+    if (xBtns[0]) { xBtns[0].click(); await wait(350); }
+    var pr2 = (E.loadPresets().filter(function (x) { return x.id === 'pr2'; })[0]) || { prompt_order: [{ order: [] }] };
+    var po1 = (pr2.prompt_order[0].order || []);
+    var b1Entry = po1.filter(function (o) { return o.identifier === 'b1'; })[0];
+    check('开关点击写回 prompt_order(b1 启用)', b1Entry && b1Entry.enabled === true);
+    // 库中块丁 → 「插入到主序列末尾」
+    var insBtn = document.querySelector('button[title="插入到主序列末尾（开始参与装配）"]');
+    if (insBtn) { insBtn.click(); await wait(350); }
+    pr2 = (E.loadPresets().filter(function (x) { return x.id === 'pr2'; })[0]) || { prompt_order: [{ order: [] }] };
+    check('库块插入主序列(order 含 d1)', (pr2.prompt_order[0].order || []).some(function (o) { return o.identifier === 'd1'; }));
+    /* —— 原有编辑器/拖拽/采样检查（无序预设 pr1） —— */
+    clickText('测试预设');
+    await wait(400);
+    check('编辑器入口(点 Core)', true);
     clickText('Core');
     await wait(350);
     check('编辑器在右侧打开(编辑提示块)', has('编辑提示块'));
     check('编辑器含 姓名/身份/位置/相对', has('身份（role）') && has('位置（position）') && has('相对（深度）'));
     // 位置断言：仅宽屏（≥860px）查"编辑器在右侧"；窄屏为上下堆叠
-    var blkBox = document.querySelector('[data-blk="0"]');
+    var blkBox = document.querySelector('[data-pos="0"]');
     var edHost = byText('编辑提示块');
     var edBox = edHost ? edHost.closest('div[style*="border"]') : null;
     if (window.innerWidth >= 860 && blkBox && edBox) {
@@ -165,9 +213,9 @@
       check('编辑器在旁(矩形右侧)', er2.left >= br.left + br.width - 120);
     } else if (window.innerWidth >= 860) { check('编辑器在旁(矩形右侧)', false); }
     else { check('编辑器在旁(矩形右侧)', true); }
-    // 拖拽模拟：第1行 mousedown → 第3行 mousemove → mouseup → 顺序重排
-    var srcRow = document.querySelector('[data-blk="0"]');
-    var target = document.querySelector('[data-blk="2"]');
+    // 拖拽模拟：第1行 mousedown → 第3行 mousemove → mouseup → 主序列重排（写回 prompt_order）
+    var srcRow = document.querySelector('[data-pos="0"]');
+    var target = document.querySelector('[data-pos="2"]');
     if (srcRow && target) {
       var tr = target.getBoundingClientRect();
       var cx = tr.left + tr.width / 2, cy = tr.top + tr.height / 2;
@@ -180,9 +228,28 @@
       await wait(400);
     }
     var seedPr = seedPreset();
-    out.push('INFO 拖拽前顺序: ' + (seedPr ? seedPr.prompts.map(function (x) { return x.name; }).join(',') : '无'));
-    var order0 = (seedPreset() || { prompts: [], sampling: {} }).prompts[0] ? (seedPreset() || { prompts: [], sampling: {} }).prompts[0].name : '';
-    check('拖拽排序生效(首块变为 追加)', order0 === '追加');
+    out.push('INFO 拖拽后主序: ' + (seedPr && seedPr.prompt_order ? JSON.stringify((seedPr.prompt_order[0].order || []).map(function (o) { return o.identifier; })) : '无 order'));
+    (window.__p3dbg || []).slice(-8).forEach(function (l) { out.push('INFO dbg ' + l); });
+    var ordArr = seedPr && seedPr.prompt_order && seedPr.prompt_order[0] ? (seedPr.prompt_order[0].order || []) : [];
+    var uiOk = ordArr.length === 3
+      && ordArr.every(function (o) { return String(o.identifier || '').indexOf('blk_') === 0; })
+      && ordArr[0] && String(ordArr[0].identifier) === String((seedPr.prompts[1] || {}).identifier);
+    check('拖拽(UI事件链)写回主序(首位=「追加」标识)', uiOk);
+    if (!uiOk && window.__p3presetTest && E.setPromptBlockSequence) {
+      /* 引擎旁证：绕过鼠标事件链直写同一套逻辑（区分 UI 链路问题 vs 引擎问题） */
+      window.__p3presetTest.heal();
+      var pcur = window.__p3presetTest.cur();
+      var ids2 = [];
+      (E.promptOrderItems(pcur)).forEach(function (x) { if (x.state === 'inserted' && x.identifier) ids2.push(x.identifier); });
+      ids2.push(ids2.shift()); /* 与拖拽意图一致：首块移到末位 → 首位变「追加」 */
+      E.setPromptBlockSequence(pcur.id, ids2);
+      await wait(300);
+      seedPr = seedPreset();
+      var o2 = seedPr && seedPr.prompt_order && seedPr.prompt_order[0] ? (seedPr.prompt_order[0].order || []) : [];
+      check('引擎直写主序(旁证·首块移到末位)', o2.length === 3 && String((o2[o2.length - 1] || {}).identifier) === String((seedPr.prompts[0] || {}).identifier));
+      var row0 = document.querySelector('[data-pos="0"]');
+      check('重绘后首位显示「追加」', !!row0 && row0.textContent.indexOf('追加') >= 0);
+    }
     // 先展开采样参数（折叠区）
     var sum = byText('采样参数（点击展开/收起）');
     if (sum) { sum.click(); await wait(250); }
@@ -207,6 +274,7 @@
         if (E.loadWorldBooks().some(function (x) { return x.id === 'wb_t1'; })) E.removeWorldBook('wb_t1');
         if (E.loadWorldBooks().some(function (x) { return x.id === 'wb_t2'; })) E.removeWorldBook('wb_t2');
         if (E.loadPresets().some(function (x) { return x.id === 'pr1'; })) E.removePreset('pr1');
+        if (E.loadPresets().some(function (x) { return x.id === 'pr2'; })) E.removePreset('pr2');
       }
     } catch (e2) {}
     try { if (window.UI && window.UI.closePanel) window.UI.closePanel(); } catch (e) {}

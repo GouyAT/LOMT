@@ -188,8 +188,23 @@
       fCase.querySelector('input').addEventListener('change', function () { E.updateWorldBookEntry(b.id, idx, { caseSensitive: fCase.querySelector('input').checked }); saveTick(); });
       var fWhole = chkIn(h, '完全匹配（整词）', !!e.matchWholeWords);
       fWhole.querySelector('input').addEventListener('change', function () { E.updateWorldBookEntry(b.id, idx, { matchWholeWords: fWhole.querySelector('input').checked }); saveTick(); });
-      var fConst = chkIn(h, '常驻（恒注入）', !!e.constant);
-      fConst.querySelector('input').addEventListener('change', function () { E.updateWorldBookEntry(b.id, idx, { constant: fConst.querySelector('input').checked }); saveTick(); });
+      /* —— 蓝绿灯（酒馆灯色语义）：🔵=constant 常驻恒注入 / 🟢=关键词触发 —— */
+      function lampBtn(isBlue) {
+        var on = isBlue ? !!e.constant : !e.constant;
+        return h('button', {
+          type: 'button',
+          onclick: function () { E.updateWorldBookEntry(b.id, idx, { constant: isBlue }); paint(); },
+          style: {
+            display: 'inline-flex', 'align-items': 'center', gap: '6px', cursor: 'pointer', padding: '5px 12px',
+            'border-radius': '8px', 'font-size': 'var(--fs-sm)', 'font-family': 'inherit',
+            background: on ? (isBlue ? 'rgba(63,169,245,.16)' : 'rgba(88,196,112,.14)') : 'transparent',
+            border: '1px solid ' + (on ? (isBlue ? '#2f7fb8' : '#3d9457') : 'var(--line-1)'),
+            color: on ? (isBlue ? '#3fa9f5' : '#58c470') : 'var(--txt-3)',
+          }
+        },
+          h('i', { style: { width: '9px', height: '9px', 'border-radius': '50%', background: isBlue ? '#3fa9f5' : '#58c470', opacity: on ? '1' : '0.35', display: 'inline-block' } }),
+          h('span', { text: isBlue ? '蓝灯 · 常驻' : '绿灯 · 关键词' }));
+      }
       var fStop = chkIn(h, '停用', !!e.disable);
       fStop.querySelector('input').addEventListener('change', function () { E.updateWorldBookEntry(b.id, idx, { disable: fStop.querySelector('input').checked }); saveTick(); });
       var fProbOn = chkIn(h, '启用触发概率', !!e.useProbability);
@@ -255,7 +270,11 @@
 
       return h('div', { style: { padding: '10px 12px', background: 'var(--bg-1)', border: '1px solid var(--line-2)', 'border-radius': '8px', 'margin-bottom': '10px', width: '100%', 'box-sizing': 'border-box' } },
         h('div', { style: { 'font-weight': '600', 'margin-bottom': '6px', color: 'var(--txt)' }, text: '编辑条目 · ' + e.comment + '（' + b.name + '）' }),
-        h('div', { style: { display: 'flex', gap: '8px', 'align-items': 'center', 'margin-bottom': '6px' } },
+        /* 蓝绿灯：蓝=constant 恒注入（无视关键词）；绿=按主要关键字命中 */
+        h('div', { style: { display: 'flex', gap: '8px', 'align-items': 'center', 'margin-bottom': '8px' } },
+          lampBtn(true), lampBtn(false),
+          h('span', { style: { 'font-size': 'var(--fs-xs)', color: 'var(--txt-3)' }, text: e.constant ? '蓝灯：无视关键词，恒注入上下文' : '绿灯：扫描命中「主要关键字」才注入' })),
+        h('div', { style: { display: 'flex', gap: '8px', 'align-items': 'center', 'margin-bottom': '6px', opacity: e.constant ? '0.55' : '1' } },
           h('span', { style: { 'font-size': 'var(--fs-sm)', color: 'var(--txt-2)' }, text: '主要关键字' }),
           h('div', { style: { 'flex': '1' } }, fKey),
           h('span', { style: { 'font-size': 'var(--fs-sm)', color: 'var(--txt-2)' }, text: '逻辑：' }),
@@ -269,7 +288,7 @@
           fldRow(h, '触发器策略', null, fLogic),
         ]),
         grid2(h, [
-          fldRow(h, '匹配', null, h('div', null, fCase, fWhole, fConst, fStop)),
+          fldRow(h, '匹配', null, h('div', null, fCase, fWhole, fStop)),
           fldRow(h, '触发概率', null, h('div', { style: { display: 'flex', gap: '8px', 'align-items': 'center' } }, fProbOn, fProb, h('span', { style: { 'font-size': 'var(--fs-xs)' }, text: '%' }))),
           fldRow(h, '粘性（消息数）', null, fSticky),
           fldRow(h, '冷却（消息数）', null, fCool),
@@ -356,9 +375,20 @@
         onCtl.setAttribute('data-role', 'row-enable');
         /* 整列点击区：行首 44px 列任意点击 = 切换（不再依赖 30px 小按钮命中） */
         var onCol = h('div', { style: { display: 'flex', 'align-items': 'center', cursor: 'pointer', height: '100%', 'min-height': '30px' }, onclick: function (ev) { ev.stopPropagation(); if (!ev.target.closest('button')) onCtl.click(); } }, onCtl);
+        /* 蓝绿灯行内切换：蓝=constant 常驻恒注入 / 绿=关键词触发（点击即切，酒馆灯色语义） */
+        var lamp = h('button', {
+          type: 'button', title: e2.constant ? '蓝灯 · 常驻恒注入（点击切为绿灯·关键词）' : '绿灯 · 关键词触发（点击切为蓝灯·常驻）',
+          onclick: function (ev) {
+            ev.stopPropagation();
+            E.updateWorldBookEntry(b.id, idx, { constant: !e2.constant }); saveTick(); paint(b);
+          },
+          style: { display: 'inline-flex', 'align-items': 'center', 'justify-content': 'center', width: '26px', height: '26px', cursor: 'pointer', background: 'none', border: 'none', padding: '0' }
+        },
+          h('i', { style: { width: '10px', height: '10px', 'border-radius': '50%', display: 'inline-block', background: e2.constant ? '#3fa9f5' : '#58c470', 'box-shadow': '0 0 6px ' + (e2.constant ? 'rgba(63,169,245,.7)' : 'rgba(88,196,112,.6)') } }));
         var row = h('div', { style: { display: 'grid', 'grid-template-columns': COLS, gap: '6px', padding: '5px 8px', 'align-items': 'center', 'border-top': '1px solid var(--line-1)', background: ST.selEntry === idx ? 'var(--bg-2)' : 'none' } },
           onCol,
           h('div', { style: { display: 'flex', gap: '6px', 'align-items': 'center', 'min-width': '0' } },
+            lamp,
             h('button', { type: 'button', style: { cursor: 'pointer', textAlign: 'left', background: 'none', border: 'none', color: 'inherit', 'font-size': 'inherit', padding: '0', 'font-family': 'inherit', overflow: 'hidden', 'text-overflow': 'ellipsis', 'white-space': 'nowrap', flex: '1', 'min-width': '0' }, title: '点击展开编辑',
               onclick: function () { ST.selEntry = ST.selEntry === idx ? null : idx; paint(b); } },
               h('span', { text: String(e2.comment || '') })),
@@ -700,20 +730,29 @@
         , wbBit(blk));
     }
 
-    /* ---- 自定义拖拽排序（整行可拖：mousedown 行 → 移动高亮目标 → 松开交换并重编号） ---- */
+    /* ---- 自定义拖拽排序（主序列内整行可拖；松开写回 prompt_order —— v4 装配序=prompt_order） ---- */
+    /* ---- 拖拽诊断（冒烟/排障用）：window.__p3dbg 环形记录最近 40 条链路事件 ---- */
+    function dbg(msg) {
+      try {
+        window.__p3dbg = window.__p3dbg || [];
+        window.__p3dbg.push(new Date().toISOString().slice(11, 23) + ' ' + msg);
+        if (window.__p3dbg.length > 40) window.__p3dbg.shift();
+      } catch (e2) { /* noop */ }
+    }
     function onDragMove(ev) {
       /* 命中检测：遍历行矩形（比 elementFromPoint 更可靠，滚动/边缘场景不失效） */
-      var rows = S.blkHost.querySelectorAll('[data-blk]');
+      var rows = S.blkHost.querySelectorAll('[data-pos]');
       var to = -1;
       for (var i = 0; i < rows.length; i++) {
         var rc = rows[i].getBoundingClientRect();
-        if (ev.clientX >= rc.left && ev.clientX <= rc.right && ev.clientY >= rc.top && ev.clientY <= rc.bottom) { to = Number(rows[i].getAttribute('data-blk')); break; }
+        if (ev.clientX >= rc.left && ev.clientX <= rc.right && ev.clientY >= rc.top && ev.clientY <= rc.bottom) { to = Number(rows[i].getAttribute('data-pos')); break; }
       }
       S.dragOverIdx = to;
+      dbg('move → over=' + to);
       for (var j = 0; j < rows.length; j++) {
-        var on = Number(rows[j].getAttribute('data-blk')) === to;
+        var on = Number(rows[j].getAttribute('data-pos')) === to;
         rows[j].style.borderColor = on ? 'var(--accent)' : 'var(--line-1)';
-        rows[j].style.background = on ? 'rgba(255,196,0,.10)' : (S.selBlock === Number(rows[j].getAttribute('data-blk')) ? 'rgba(255,196,0,.07)' : 'var(--bg-1)');
+        rows[j].style.background = on ? 'rgba(255,196,0,.10)' : '';
       }
     }
     function onDragEnd() {
@@ -723,71 +762,141 @@
       var from = S.dragIdx, to = S.dragOverIdx;
       S.dragIdx = -1; S.dragOverIdx = -1;
       /* 未拖动（点击）→ 不重绘，让 click 事件正常落到块行上（否则 click 会因重绘丢失） */
-      if (!p || from < 0 || to < 0 || from === to) return;
-      /* 数组真实重排：移动元素 + 顺序重编号（order=1..n），整体写回 —— 列表顺序随之变化 */
-      var arr = p.prompts.slice();
-      var moved = arr.splice(from, 1)[0];
-      arr.splice(to, 0, moved);
-      arr = arr.map(function (b2, i2) {
-        var nb = Object.assign({}, b2);
-        nb.injection_order = i2 + 1;
-        return nb;
-      });
-      E.updatePreset(p.id, { prompts: arr });
-      S.selBlock = to;
+      if (!p || from < 0 || to < 0 || from === to) { dbg('end skip: p=' + (p ? p.id : 'null') + ' from=' + from + ' to=' + to); return; }
+      /* 老块自愈：无 identifier 的先补一个（prompt_order 靠 identifier 寻址） */
+      healBlockIds(p);
+      /* 主序列（含停用行）真实重排 → 写回 prompt_order（酒馆语义：顺序与开关都在 prompt_order 上） */
+      var items = E.promptOrderItems ? E.promptOrderItems(cur() || p) : [];
+      var seqIds = [];
+      items.forEach(function (it) { if (it.state === 'inserted' && it.identifier) seqIds.push(it.identifier); });
+      dbg('end: from=' + from + ' to=' + to + ' seqLen=' + seqIds.length + ' preset=' + p.id);
+      if (from >= seqIds.length || to >= seqIds.length) { paint(); return; }
+      var movedId = seqIds.splice(from, 1)[0];
+      seqIds.splice(to, 0, movedId);
+      try {
+        E.setPromptBlockSequence(p.id, seqIds);
+        dbg('written order=' + JSON.stringify(seqIds));
+      } catch (err) { dbg('write ERROR ' + String(err && err.message || err)); }
       saveTick(); paint();
     }
-    function startDrag(ev, idx) {
+    /** 给缺 identifier 的块补生成标识（本地老数据兼容；导入预设自带标识不受影响） */
+    function healBlockIds(p) {
+      if (!E.promptOrderItems || !E.updatePresetBlock) { dbg('heal skip: api missing'); return; }
+      var n = 0;
+      E.promptOrderItems(p).forEach(function (it) {
+        if (it.state !== 'inserted' && it.state !== 'unlisted') return;
+        if (it.block && !it.identifier && it.index >= 0) {
+          E.updatePresetBlock(p.id, it.index, { identifier: 'blk_' + Date.now() + '_' + Math.floor(Math.random() * 1e5) + '_' + it.index });
+          n += 1;
+        }
+      });
+      dbg('heal: +' + n);
+    }
+    function startDrag(ev, pos) {
       /* 拖拽守卫：只排除表单控件（名称按钮允许拖——点击仍是编辑） */
       var t = ev && ev.target;
       if (t && t.closest && t.closest('input,select,textarea')) return;
       ev.preventDefault();
-      S.dragIdx = idx;
+      S.dragIdx = pos;
+      dbg('start pos=' + pos);
       document.addEventListener('mousemove', onDragMove);
       document.addEventListener('mouseup', onDragEnd);
     }
+    /* 冒烟/排障钩子：绕过鼠标事件链直接驱动同一套逻辑 */
+    window.__p3presetTest = { cur: cur, heal: function () { healBlockIds(cur()); } };
 
-    /* ---- 提示块卡片列表（左栏：框 · 选中金色高亮 · 整行可拖） ---- */
+    /* ---- 提示块卡片列表（左栏：主序列[✓/✕ 开关 · 拖拽] + 库中未插入分组）----
+       酒馆语义：顺序与开关都在 prompt_order 上；未插入的库块永不装配，单独分组展示 */
     function paintBlocks(p) {
       UI.clear(S.blkHost);
+      var items = (E.promptOrderItems && p.prompts.length) ? E.promptOrderItems(p) : [];
+      var insCnt = items.filter(function (it) { return it.state === 'inserted'; }).length;
+      var unlistedCnt = items.length - insCnt;
       S.blkHost.appendChild(h('div', { style: { display: 'flex', 'align-items': 'center', 'justify-content': 'space-between', 'margin': '4px 0 8px' } },
-        h('div.sec-title', { style: { margin: '0' } }, h('span.st-t', { text: '提示块（按住行拖动排序）' }), h('span.st-l', { text: 'Prompts' }), h('i.st-line')),
-        h('button.btn.btn--xs', { type: 'button', onclick: function () {
+        h('div.sec-title', { style: { margin: '0' } }, h('span.st-t', { text: '提示块（拖动排序 · ✓开 ✕关）' }), h('span.st-l', { text: 'Prompts' }), h('i.st-line')),
+        h('button.btn.btn--xs', { type: 'button', title: '新增块并追加到主序列末尾', onclick: function () {
           E.addPresetBlock(p.id, { name: '新提示块', role: 'system', content: '', injection_position: 0, injection_depth: 0, injection_order: p.prompts.length + 1, system_prompt: true });
-          S.selBlock = p.prompts.length; paint();
+          S.selBlock = p.prompts.length - 1; paint();
         } }, icon('plus', 'ico ico--sm'), h('span', { text: '新增' }))));
-      /* 酒馆顺序 = prompt_order（identifier+enabled）；无则数组序。行显示序=装配序，编辑用真实数组索引 */
-      var display = (E.orderedPromptBlocks && p.prompts.length) ? E.orderedPromptBlocks(p) : p.prompts;
-      /* 世界书注入（当前剧情文本）按位置类取一次，供"角色定义前/后"块的 token 合并显示（酒馆 24845 同款） */
+      /* 世界书注入（当前剧情文本）按位置类取一次，供"角色定义前/后"块的 token 合并显示（酒馆同款） */
       var sceneTxt = (D.TURNS && D.TURNS[D.turn] && D.TURNS[D.turn].text) || '';
       var wbAll = E.buildInjectBlocks({ text: sceneTxt });
       var wbOf = function (cls) {
-        return wbAll.filter(function (x) { return x.positionClass === cls; }).map(function (x) { return '【' + x.book + ' · ' + x.comment + '】\n' + x.content; }).join('\n\n');
+        return wbAll.filter(function (x) { return x.positionClass === cls; }).map(function (x) { return x.content; }).join('\n');
       };
-      display.forEach(function (blk, pos) {
-        var idx = p.prompts.indexOf(blk);
-        if (idx < 0) return;
-        var blkId = String(blk.identifier || '');
+      var unlistedHeaderDone = false;
+      items.forEach(function (it) {
+        if (it.state === 'unlisted' && !unlistedHeaderDone) {
+          unlistedHeaderDone = true;
+          S.blkHost.appendChild(h('div', { style: { display: 'flex', 'align-items': 'center', gap: '6px', margin: '12px 0 6px' } },
+            h('span', { style: { 'font-size': 'var(--fs-xs)', color: 'var(--txt-3)' }, text: '未插入 · 仅在库中（不参与装配）· ' + unlistedCnt + ' 块' }),
+            h('i', { style: { flex: '1', height: '1px', background: 'var(--line-1)', display: 'inline-block' } })));
+        }
+        var blk = it.block;
+        var idx = it.index;
+        var pos = it.seq;
+        if (!blk) {
+          /* order 引用了不存在的块（预设脏数据）：显示占位行，不可开关/编辑；仍计入主序列位置 */
+          S.blkHost.appendChild(h('div', { 'data-pos': String(pos - 1), style: { display: 'flex', gap: '7px', 'align-items': 'center', padding: '7px 8px', border: '1px dashed var(--line-1)', 'border-radius': '8px', margin: '0 0 6px', opacity: '0.6' } },
+            h('span', { style: { 'flex': '0 0 20px', 'font-size': 'var(--fs-xs)', color: 'var(--txt-2)', 'text-align': 'center' }, text: String(pos) }),
+            h('span', { style: { flex: '1', 'font-size': 'var(--fs-xs)', color: 'var(--txt-3)' }, text: '（缺失块 · ' + (it.identifier || '?') + '）' })));
+          return;
+        }
+        var enabled = !!it.enabled;
+        var blkId = String(it.identifier || (blk && blk.identifier) || '');
+        var isWib = blkId === 'worldInfoBefore', isWia = blkId === 'worldInfoAfter';
         var mergedTok = estTok(blk.content);
-        if (blkId === 'worldInfoBefore') mergedTok += estTok(wbOf('charBefore'));
-        if (blkId === 'worldInfoAfter') mergedTok += estTok(wbOf('charAfter'));
-        var tokLabel = mergedTok + (blkId === 'worldInfoBefore' || blkId === 'worldInfoAfter' ? '（含世界书）' : '');
-        var row = h('div', { 'data-blk': String(idx), style: { display: 'flex', gap: '7px', 'align-items': 'center', padding: '7px 8px', border: '1px solid var(--line-1)', 'border-radius': '8px', margin: '0 0 6px', cursor: 'grab', background: S.selBlock === idx ? 'rgba(255,196,0,.07)' : 'var(--bg-1)' },
-          onmousedown: function (ev) { startDrag(ev, idx); } },
-          h('span', { style: { display: 'inline-flex', color: 'var(--txt-2)', padding: '2px' } }, icon('list', 'ico ico--sm')),
-          h('span', { style: { 'flex': '0 0 20px', 'font-size': 'var(--fs-xs)', color: 'var(--txt-2)' }, text: String(pos + 1) }),
-          h('button', { type: 'button', style: { flex: '1', textAlign: 'left', cursor: 'pointer', background: 'none', border: 'none', color: 'inherit', 'font-size': 'inherit', padding: '0', 'font-family': 'inherit', overflow: 'hidden', 'text-overflow': 'ellipsis', 'white-space': 'nowrap' }, title: '点击编辑（在右侧打开）', onclick: function () { S.selBlock = S.selBlock === idx ? null : idx; paint(); } },
-            h('span', { text: ((blk.name || '(未命名)') + ' · ' + (blk.role || 'system')) + (blk.system_prompt ? ' · 系统' : '') })),
-          h('span.u-mono', { style: { 'font-size': 'var(--fs-xs)', color: 'var(--txt-2)' }, text: 'P' + (blk.injection_position ?? 0) + ' D' + (blk.injection_depth ?? 0) }),
-          h('span.u-mono', { style: { 'font-size': 'var(--fs-xs)', color: 'var(--txt-3)', 'min-width': '72px', 'text-align': 'right', display: 'inline-block' }, title: '内容估算 token 数（含世界书注入）', text: tokLabel }),
-          miniBtn(h, 'copy', function (ev) { ev.stopPropagation(); E.addPresetBlock(p.id, JSON.parse(JSON.stringify(blk))); paint(); }, false, '复制提示块'),
-          miniBtn(h, 'trash', function (ev) {
+        if (isWib) mergedTok += estTok(wbOf('charBefore'));
+        if (isWia) mergedTok += estTok(wbOf('charAfter'));
+        var tokLabel = String(mergedTok) + ((isWib || isWia) ? '＋WB' : '');
+        var rowStyle = { display: 'flex', gap: '7px', 'align-items': 'center', padding: '7px 8px', border: '1px solid var(--line-1)', 'border-radius': '8px', margin: '0 0 6px', background: S.selBlock === idx ? 'rgba(255,196,0,.07)' : 'var(--bg-1)' };
+        var nameColor = enabled ? 'inherit' : 'var(--txt-3)';
+        var row;
+        if (it.state === 'inserted') {
+          row = h('div', { 'data-pos': String(pos - 1), style: Object.assign({ cursor: 'grab' }, rowStyle), onmousedown: function (ev) { startDrag(ev, pos - 1); } },
+            h('span', { style: { display: 'inline-flex', color: 'var(--txt-2)', padding: '2px' } }, icon('list', 'ico ico--sm')),
+            h('span', { style: { 'flex': '0 0 20px', 'font-size': 'var(--fs-xs)', color: 'var(--txt-2)' }, text: String(pos) }));
+        } else {
+          row = h('div', { style: Object.assign({ cursor: 'default', opacity: '0.85' }, rowStyle) },
+            h('span', { style: { display: 'inline-flex', color: 'var(--txt-3)', padding: '2px', 'flex': '0 0 20px', 'justify-content': 'center' } }, icon('cube', 'ico ico--sm')),
+            h('span', { style: { 'flex': '0 0 20px', 'font-size': 'var(--fs-xs)', color: 'var(--txt-3)', 'text-align': 'center' }, text: '库' }));
+        }
+        /* 启用/停用开关（硬编码蓝✓红✕；酒馆：开关状态在 prompt_order 条目上） */
+        if (idx >= 0) {
+          row.appendChild(h('button', { type: 'button', title: enabled ? '已启用（点击停用）' : '已停用（点击启用）', onclick: function (ev) {
             ev.stopPropagation();
-            UI.confirm({ title: '删除提示块', msg: '删除「' + (blk.name || '(未命名)') + '」？', icon: 'trash', okText: '删除' })
-              .then(function (ok) { if (ok) { E.removePresetBlock(p.id, idx); S.selBlock = null; paint(); } });
-          }, true, '删除提示块'));
+            E.togglePresetBlockEnabled(p.id, idx, !enabled);
+            tell(enabled ? '已停用' : '已启用', (blk.name || '(未命名)'), enabled ? 'warn' : 'good', enabled ? 'close' : 'check');
+            saveTick(); paint();
+          }, style: { flex: '0 0 22px', cursor: 'pointer', background: 'none', border: 'none', padding: '0 2px', 'font-size': '13px', 'font-weight': '700', color: enabled ? '#3fa9f5' : '#e06a50', 'font-family': 'inherit' }, text: enabled ? '✓' : '✕' }));
+        }
+        row.appendChild(h('button', { type: 'button', style: { flex: '1', textAlign: 'left', cursor: 'pointer', background: 'none', border: 'none', color: nameColor, 'font-size': 'inherit', padding: '0', 'font-family': 'inherit', overflow: 'hidden', 'text-overflow': 'ellipsis', 'white-space': 'nowrap', opacity: enabled ? '1' : '0.72' }, title: '点击编辑（在右侧打开）', onclick: function () { if (idx < 0) return; S.selBlock = S.selBlock === idx ? null : idx; paint(); } },
+          h('span', { text: ((blk.name || '(未命名)') + ' · ' + (blk.role || 'system')) + (blk.marker ? ' · 标记' : '') + (enabled ? '' : ' · 停用') })));
+        if (blk.marker) row.appendChild(h('span', { style: { 'font-size': '10px', color: 'var(--txt-3)', border: '1px solid var(--line-1)', borderRadius: '4px', padding: '0 4px' }, text: '标记' }));
+        row.appendChild(h('span.u-mono', { style: { 'font-size': 'var(--fs-xs)', color: 'var(--txt-2)' }, text: 'P' + (blk.injection_position ?? 0) + ' D' + (blk.injection_depth ?? 0) }));
+        row.appendChild(h('span.u-mono', { style: { 'font-size': 'var(--fs-xs)', color: 'var(--txt-3)', 'min-width': '64px', 'text-align': 'right', display: 'inline-block' }, title: '内容估算 token 数（含世界书注入）', text: tokLabel }));
+        if (it.state === 'unlisted') {
+          row.appendChild(miniBtn(h, 'plus', function (ev) {
+            ev.stopPropagation();
+            healBlockIds(p);
+            var ids = [];
+            (E.promptOrderItems(cur() || p)).forEach(function (x) { if (x.state === 'inserted' && x.identifier) ids.push(x.identifier); });
+            var pid2 = String(blkId || '');
+            if (pid2) ids.push(pid2);
+            E.setPromptBlockSequence(p.id, ids);
+            tell('已加入主序列末尾', blk.name || pid2, 'good', 'check');
+            saveTick(); paint();
+          }, false, '插入到主序列末尾（开始参与装配）'));
+        }
+        row.appendChild(miniBtn(h, 'copy', function (ev) { ev.stopPropagation(); E.addPresetBlock(p.id, JSON.parse(JSON.stringify(blk))); paint(); }, false, '复制提示块'));
+        row.appendChild(miniBtn(h, 'trash', function (ev) {
+          ev.stopPropagation();
+          UI.confirm({ title: '删除提示块', msg: '删除「' + (blk.name || '(未命名)') + '」？', icon: 'trash', okText: '删除' })
+            .then(function (ok) { if (ok) { E.removePresetBlock(p.id, idx); S.selBlock = null; paint(); } });
+        }, true, '删除提示块'));
         S.blkHost.appendChild(row);
       });
+      if (!items.length) S.blkHost.appendChild(h('p.field-hint', { text: '该预设暂无提示块（导入酒馆预设或点「新增」）' }));
     }
 
     /* ---- 预设选择（顶部小列表） ---- */
@@ -839,25 +948,31 @@
         if (cfg && cfg.MAP_DATA && cfg.MAP_DATA.landmarks) mapCtx = '（地图总览与当前空间情景）';
         var blocks = E.buildInjectBlocks({ text: sceneText + ' ' + sceneName });
         var msgs = E.buildMessages(p2, '【玩家输入示例】', mapCtx, blocks);
+        var zoneCnt = { charBefore: 0, charAfter: 0, inline: 0 };
+        blocks.forEach(function (b2) {
+          if (b2.positionClass === 'charBefore' || b2.positionClass === 'charAfter') zoneCnt[b2.positionClass] += 1;
+          else if (b2.positionClass !== 'system') zoneCnt.inline += 1;
+          else zoneCnt.charBefore += 1;
+        });
         UI.clear(prevHost);
         msgs.forEach(function (m) {
-          var wbCount = (m.content.match(/\u3010[^\u3011]+\u00b7[^\u3011]+\u3011/g) || []).length;
           prevHost.appendChild(h('div.lcard', null,
             icon(m.role === 'system' ? 'context' : (m.role === 'assistant' ? 'spark' : 'user'), 'ico lc-ico'),
             h('div', null,
-              h('div.lc-t', { text: (m.role === 'system' ? '系统段' : m.role === 'assistant' ? '助手段（前缀）' : '用户段') + ' · ' + estTok(m.content) + ' tok' + (wbCount ? ' · 世界书注入 ' + wbCount + ' 条' : '') }),
+              h('div.lc-t', { text: (m.role === 'system' ? '系统段' : m.role === 'assistant' ? '助手段（前缀）' : '用户段') + ' · ' + estTok(m.content) + ' tok' }),
               h('div.lc-d', { style: { 'white-space': 'pre-wrap', 'line-height': '1.7' }, text: String(m.content || '') })
             )
           ));
         });
-        tell('装配预览已刷新', '世界书命中 ' + blocks.length + ' 条注入系统段', 'good', 'context');
+        tell('装配预览已刷新', '世界书命中 ' + blocks.length + ' 条：↑Char ' + zoneCnt.charBefore + ' / ↓Char ' + zoneCnt.charAfter + ' / @深度 ' + zoneCnt.inline + '（注入文本只含条目内容）', 'good', 'context');
         /* 世界书注入明细：点击条目名展开完整内容 */
         if (blocks.length) {
           var wbDetail = h('details', { style: { border: '1px solid var(--line-1)', 'border-radius': '8px', padding: '6px 10px', 'margin-top': '8px' } },
             h('summary', { style: { cursor: 'pointer', 'font-size': 'var(--fs-xs)', color: 'var(--txt-2)' }, text: '世界书注入明细（' + blocks.length + ' 条 · 点击查看）' }));
           blocks.forEach(function (wb) {
+            var posLabel = wb.positionClass === 'charBefore' ? '（角色定义前 ↑Char）' : wb.positionClass === 'charAfter' ? '（角色定义后 ↓Char）' : '（@深度 D' + (wb.depth ?? 4) + (wb.role && wb.role !== 'system' ? ' · ' + wb.role : '') + '）';
             wbDetail.appendChild(h('details', { style: { 'margin-top': '4px' } },
-              h('summary', { style: { cursor: 'pointer', 'font-size': 'var(--fs-xs)', color: 'var(--acc)', 'margin-left': '6px' }, text: '【' + wb.book + ' · ' + wb.comment + '】' + (wb.positionClass === 'charBefore' ? '（角色定义前）' : wb.positionClass === 'charAfter' ? '（角色定义后）' : '') }),
+              h('summary', { style: { cursor: 'pointer', 'font-size': 'var(--fs-xs)', color: 'var(--acc)', 'margin-left': '6px' }, text: '【' + wb.book + ' · ' + wb.comment + '】' + posLabel }),
               h('div', { style: { 'font-size': 'var(--fs-xs)', 'white-space': 'pre-wrap', 'line-height': '1.7', 'margin': '4px 10px', color: 'var(--txt-2)' }, text: String(wb.content) })));
           });
           prevHost.appendChild(wbDetail);
